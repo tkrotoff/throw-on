@@ -1,0 +1,12 @@
+.DS_Store
+.git/
+.husky/
+.editorconfig
+.gitignore
+.eslintcache
+.eslintignore
+.prettierignore
+LICENSE
+
+dist/
+coverage/
