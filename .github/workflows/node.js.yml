@@ -2,11 +2,8 @@
 
 name: Node.js CI
 
-on:
-  push:
-    branches: [$default-branch]
-  pull_request:
-    branches: [$default-branch]
+# https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#on
+on: push
 
 jobs:
   build:
