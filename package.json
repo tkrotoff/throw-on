@@ -36,6 +36,7 @@
     "publish:beta": "npm version 0.1.0-beta.1 && npm publish --tag next --dry-run",
     "npm:update": "npm run clean:all && npx npm-check-updates --upgrade && npm install"
   },
+  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.16.5",
     "@babel/preset-env": "^7.16.5",
