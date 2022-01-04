@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unknown-property, react/no-deprecated, @typescript-eslint/no-empty-function */
+
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 import path from 'path';
@@ -175,9 +177,7 @@ describe('throwOnConsoleError()', () => {
 
   test('Invalid DOM property', () => {
     // @ts-ignore
-    // eslint-disable-next-line react/no-unknown-property
     expect(() => render(<div class="invalid" />)).toThrow(
-      // eslint-disable-next-line no-regex-spaces
       'Warning: Invalid DOM property `class`. Did you mean `className`?\n    at div'
     );
   });
@@ -256,28 +256,19 @@ describe('throwOnConsoleError()', () => {
   });
 
   test('You provided a `value` prop to a form field without an `onChange` handler', () => {
-    function MyComponent() {
-      return <input value="John" />;
-    }
-
-    expect(() => render(<MyComponent />)).toThrow(
+    expect(() => render(<input value="John" />)).toThrow(
       new RegExp(
         '^Warning: You provided a `value` prop to a form field without an `onChange` handler.*' +
-          '    at input\n' +
-          '    at MyComponent',
+          '    at input',
         's'
       )
     );
   });
 
   test('Unsupported style property', () => {
-    function MyComponent() {
-      // @ts-ignore
-      return <div style={{ 'background-color': 'black' }} />;
-    }
-
-    expect(() => render(<MyComponent />)).toThrow(
-      'Warning: Unsupported style property background-color. Did you mean backgroundColor?\n    at div\n    at MyComponent'
+    // @ts-ignore
+    expect(() => render(<div style={{ 'background-color': 'black' }} />)).toThrow(
+      'Warning: Unsupported style property background-color. Did you mean backgroundColor?\n    at div'
     );
   });
 });
@@ -293,7 +284,6 @@ describe('throwOnConsoleWarn()', () => {
 
   test('componentWillMount has been renamed, and is not recommended for use', () => {
     class MyComponent extends Component {
-      // eslint-disable-next-line react/no-deprecated, @typescript-eslint/no-empty-function
       componentWillMount() {}
 
       render() {
