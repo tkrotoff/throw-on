@@ -4,7 +4,7 @@ import { format } from 'util';
 const originalConsoleAssert = console.assert;
 
 /**
- * Any console.assert call will throw (causing the test to fail).
+ * Makes console.assert to throw if called.
  */
 export function throwOnConsoleAssert() {
   // [console.assert not throwing with v22.4.0](https://github.com/facebook/jest/issues/5634)
@@ -12,7 +12,7 @@ export function throwOnConsoleAssert() {
 }
 
 /**
- * Restore the original console.assert implementations.
+ * Restores the original console.assert implementation.
  */
 export function restoreConsoleAssert() {
   console.assert = originalConsoleAssert;
@@ -52,7 +52,7 @@ function throwError(...data: any[]) {
 const originalConsoleError = console.error;
 
 /**
- * Any console.error call will throw (causing the test to fail).
+ * Makes console.error to throw if called.
  */
 export function throwOnConsoleError() {
   console.error = (...data: any[]) => {
@@ -61,7 +61,7 @@ export function throwOnConsoleError() {
 }
 
 /**
- * Restore the original console.error implementations.
+ * Restores the original console.error implementation.
  */
 export function restoreConsoleError() {
   console.error = originalConsoleError;
@@ -70,7 +70,7 @@ export function restoreConsoleError() {
 const originalConsoleWarn = console.warn;
 
 /**
- * Any console.warn call will throw (causing the test to fail).
+ * Makes console.warn to throw if called.
  */
 export function throwOnConsoleWarn() {
   console.warn = (...data: any[]) => {
@@ -79,7 +79,7 @@ export function throwOnConsoleWarn() {
 }
 
 /**
- * Restore the original console.error implementations.
+ * Restores the original console.error implementation.
  */
 export function restoreConsoleWarn() {
   console.warn = originalConsoleWarn;
