@@ -7,7 +7,12 @@
     // If we keep "preserve", sometimes tsc-files generates "error TS2503: Cannot find namespace 'React'"
     "jsx": "react-jsxdev",
 
-    "target": "esnext",
+    // FIXME Bundlephobia does not support optional chaining (?.)
+    // https://github.com/pastelsky/bundlephobia/issues/413
+    //"target": "esnext",
+    "target": "es2019",
+    "lib": ["esnext", "dom"],
+
     "module": "esnext",
     "moduleResolution": "node",
     "esModuleInterop": true,
