@@ -100,7 +100,7 @@ describe('throwOnConsoleError()', () => {
     );
   });
 
-  // Works solo, not with the other tests
+  // Works solo, messes with the other tests (React 17.0.2)
   test.skip('Each child in a list should have a unique "key" prop.', () => {
     expect(() =>
       render(<DivComponent>{[<DivComponent />, <DivComponent />]}</DivComponent>)
@@ -111,6 +111,13 @@ describe('throwOnConsoleError()', () => {
         's'
       )
     );
+
+    // React does not display this warning message if it has already been displayed
+    // Subsequent calls after a throw won't throw because of
+    // https://github.com/facebook/react/blob/v17.0.2/packages/react/src/jsx/ReactJSXElementValidator.js#L142-L144
+    expect(() =>
+      render(<DivComponent>{[<DivComponent />, <DivComponent />]}</DivComponent>)
+    ).not.toThrow();
   });
 
   test('Encountered two children with the same key', () => {
@@ -134,6 +141,11 @@ describe('throwOnConsoleError()', () => {
 
       async function handleClick() {
         await wait(10);
+
+        // React does not display this warning message if it has already been displayed
+        // Subsequent calls after a throw won't throw because of
+        // https://github.com/facebook/react/blob/v17.0.2/packages/react-reconciler/src/ReactFiberWorkLoop.old.js#L3025
+        // @ts-ignore
         expect(() => setState('Update state')).toThrow(
           new RegExp(
             `^Warning: Can't perform a React state update on an unmounted component.*` +
@@ -173,6 +185,13 @@ describe('throwOnConsoleError()', () => {
         's'
       )
     );
+
+    // React does not display this warning message if it has already been displayed
+    // Subsequent calls after a throw will throw because of
+    // https://github.com/facebook/react/blob/v17.0.2/packages/react-dom/src/shared/ReactDOMUnknownPropertyHook.js#L165
+    // https://github.com/facebook/react/blob/v17.0.2/packages/react-dom/src/shared/ReactDOMUnknownPropertyHook.js#L29-L31
+    // @ts-ignore
+    expect(() => render(<div unknownProp="value" />)).toThrow();
   });
 
   test('Invalid DOM property', () => {
@@ -180,6 +199,13 @@ describe('throwOnConsoleError()', () => {
     expect(() => render(<div class="invalid" />)).toThrow(
       'Warning: Invalid DOM property `class`. Did you mean `className`?\n    at div'
     );
+
+    // React does not display this warning message if it has already been displayed
+    // Subsequent calls after a throw will throw because of
+    // https://github.com/facebook/react/blob/v17.0.2/packages/react-dom/src/shared/ReactDOMUnknownPropertyHook.js#L150
+    // https://github.com/facebook/react/blob/v17.0.2/packages/react-dom/src/shared/ReactDOMUnknownPropertyHook.js#L29-L31
+    // @ts-ignore
+    expect(() => render(<div class="invalid" />)).toThrow();
   });
 
   test('Cannot update a component while rendering a different component', () => {
@@ -201,6 +227,11 @@ describe('throwOnConsoleError()', () => {
         's'
       )
     );
+
+    // React does not display this warning message if it has already been displayed
+    // Subsequent calls after a throw won't throw because of
+    // https://github.com/facebook/react/blob/v17.0.2/packages/react-reconciler/src/ReactFiberWorkLoop.old.js#L3210-L3211    // @ts-ignore
+    expect(() => render(<Parent />)).not.toThrow();
   });
 
   test('React has detected a change in the order of Hooks', () => {
@@ -263,6 +294,9 @@ describe('throwOnConsoleError()', () => {
         's'
       )
     );
+
+    // React always displays this warning message even if already displayed
+    expect(() => render(<input value="John" />)).toThrow();
   });
 
   test('Unsupported style property', () => {
@@ -270,6 +304,13 @@ describe('throwOnConsoleError()', () => {
     expect(() => render(<div style={{ 'background-color': 'black' }} />)).toThrow(
       'Warning: Unsupported style property background-color. Did you mean backgroundColor?\n    at div'
     );
+
+    // React does not display this warning message if it has already been displayed
+    // Subsequent calls after a throw won't throw because of
+    // https://github.com/facebook/react/blob/v17.0.2/packages/react-dom/src/shared/warnValidStyle.js#L35
+    // https://github.com/facebook/react/blob/v17.0.2/packages/react-dom/src/shared/ReactDOMUnknownPropertyHook.js#L29-L31
+    // @ts-ignore
+    expect(() => render(<div style={{ 'background-color': 'black' }} />)).not.toThrow();
   });
 });
 
@@ -298,5 +339,10 @@ describe('throwOnConsoleWarn()', () => {
         's'
       )
     );
+
+    // React does not display this warning message if it has already been displayed
+    // Subsequent calls after a throw won't throw because of
+    // https://github.com/facebook/react/blob/v17.0.2/packages/react-reconciler/src/ReactStrictModeWarnings.old.js#L68-L70
+    expect(() => render(<MyComponent />)).not.toThrow();
   });
 });
