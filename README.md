@@ -61,3 +61,44 @@ throwOnFetch();
 Or copy-paste [throwOnConsole](src/throwOnConsole.ts) and/or [throwOnFetch](src/throwOnFetch.ts) into your source code.
 
 Requires Node.js >= 15 or a [String.replaceAll](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replaceAll) [polyfill](https://github.com/zloirock/core-js#stringreplaceall).
+
+## API
+
+```TypeScript
+/**
+ * Makes console.assert to throw if called.
+ */
+function throwOnConsoleAssert(): void;
+
+/**
+ * Restores the original console.assert implementation.
+ */
+function restoreConsoleAssert(): void;
+
+/**
+ * Makes console.error to throw if called.
+ */
+function throwOnConsoleError(options?: Options): void;
+
+/**
+ * Restores the original console.error implementation.
+ */
+function restoreConsoleError(): void;
+
+/**
+ * Makes console.warn to throw if called.
+ */
+function throwOnConsoleWarn(options?: Options): void;
+
+/**
+ * Restores the original console.error implementation.
+ */
+function restoreConsoleWarn(): void;
+
+type Options = {
+  /**
+   * Messages to ignore (won't throw), each message to ignore can be a substring or a regex
+   */
+  ignore?: (string | RegExp)[];
+};
+```

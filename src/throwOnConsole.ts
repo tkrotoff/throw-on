@@ -18,8 +18,24 @@ export function restoreConsoleAssert() {
   console.assert = originalConsoleAssert;
 }
 
-function throwError(...data: any[]) {
+type Options = {
+  /**
+   * Messages to ignore (won't throw), each message to ignore can be a substring or a regex
+   */
+  ignore?: (string | RegExp)[];
+};
+
+function throwError(options?: Options, ...data: any[]) {
   let message = format(...data);
+
+  const ignore = options?.ignore;
+  if (
+    ignore?.some(msgToIgnore =>
+      typeof msgToIgnore === 'string' ? message.includes(msgToIgnore) : message.match(msgToIgnore)
+    )
+  ) {
+    return;
+  }
 
   // React adds its own stack trace to the console.error() message:
   // https://github.com/facebook/react/blob/v17.0.2/packages/shared/consoleWithStackDev.js#L33-L37
@@ -54,9 +70,9 @@ const originalConsoleError = console.error;
 /**
  * Makes console.error to throw if called.
  */
-export function throwOnConsoleError() {
+export function throwOnConsoleError(options?: Options) {
   console.error = (...data: any[]) => {
-    throwError(...data);
+    throwError(options, ...data);
   };
 }
 
@@ -72,9 +88,9 @@ const originalConsoleWarn = console.warn;
 /**
  * Makes console.warn to throw if called.
  */
-export function throwOnConsoleWarn() {
+export function throwOnConsoleWarn(options?: Options) {
   console.warn = (...data: any[]) => {
-    throwError(...data);
+    throwError(options, ...data);
   };
 }
 

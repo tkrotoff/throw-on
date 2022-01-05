@@ -312,6 +312,24 @@ describe('throwOnConsoleError()', () => {
     // @ts-ignore
     expect(() => render(<div style={{ 'background-color': 'black' }} />)).not.toThrow();
   });
+
+  test('ignore option', () => {
+    expect(() => render(<input value="John" />)).toThrow();
+
+    // substring
+    throwOnConsoleError({
+      ignore: ['You provided a `value` prop to a form field without an `onChange` handler']
+    });
+    expect(() => render(<input value="John" />)).not.toThrow();
+
+    // regex
+    throwOnConsoleError({
+      ignore: [
+        /^Warning: You provided a `value` prop to a form field without an `onChange` handler/
+      ]
+    });
+    expect(() => render(<input value="John" />)).not.toThrow();
+  });
 });
 
 describe('throwOnConsoleWarn()', () => {
@@ -339,6 +357,24 @@ describe('throwOnConsoleWarn()', () => {
         's'
       )
     );
+
+    // React does not display this warning message if it has already been displayed
+    // Subsequent calls after a throw won't throw because of
+    // https://github.com/facebook/react/blob/v17.0.2/packages/react-reconciler/src/ReactStrictModeWarnings.old.js#L68-L70
+    expect(() => render(<MyComponent />)).not.toThrow();
+  });
+
+  test('ignore option', () => {
+    class MyComponent extends Component {
+      componentWillReceiveProps() {}
+
+      render() {
+        return <DivComponent />;
+      }
+    }
+
+    throwOnConsoleWarn({ ignore: ['componentWillReceiveProps has been renamed'] });
+    expect(() => render(<MyComponent />)).not.toThrow();
 
     // React does not display this warning message if it has already been displayed
     // Subsequent calls after a throw won't throw because of
