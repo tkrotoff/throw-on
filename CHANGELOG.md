@@ -1,3 +1,7 @@
+## 0.2.2 (2022/01/06)
+
+- Bundlephobia does not support optional chaining (?.): https://github.com/pastelsky/bundlephobia/issues/413
+
 ## 0.2.1 (2022/01/06)
 
 - Fix throwOnConsoleWarn stack trace
