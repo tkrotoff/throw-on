@@ -25,7 +25,7 @@ type Options = {
   ignore?: (string | RegExp)[];
 };
 
-function throwError(options?: Options, ...data: any[]) {
+function throwError(consoleMethod: () => void, options?: Options, ...data: any[]) {
   let message = format(...data);
 
   const ignore = options?.ignore;
@@ -59,7 +59,7 @@ function throwError(options?: Options, ...data: any[]) {
     //
     // > The optional constructorOpt argument accepts a function.
     // > If given, all frames above constructorOpt, including constructorOpt, will be omitted from the generated stack trace.
-    console.error
+    consoleMethod
   );
 
   throw e;
@@ -72,7 +72,7 @@ const originalConsoleError = console.error;
  */
 export function throwOnConsoleError(options?: Options) {
   console.error = (...data: any[]) => {
-    throwError(options, ...data);
+    throwError(console.error, options, ...data);
   };
 }
 
@@ -90,7 +90,7 @@ const originalConsoleWarn = console.warn;
  */
 export function throwOnConsoleWarn(options?: Options) {
   console.warn = (...data: any[]) => {
-    throwError(options, ...data);
+    throwError(console.warn, options, ...data);
   };
 }
 
