@@ -95,6 +95,26 @@ function throwOnConsoleWarn(options?: Options): void;
  */
 function restoreConsoleWarn(): void;
 
+/**
+ * Makes fetch to throw if called.
+ */
+function throwOnFetch(): void;
+
+/**
+ * Restores the original fetch implementation.
+ */
+function restoreFetch(): void;
+
+/**
+ * Makes XMLHttpRequest.open to throw if called.
+ */
+function throwOnXMLHttpRequestOpen(): void;
+
+/**
+ * Restores the original XMLHttpRequest.open implementation.
+ */
+function restoreXMLHttpRequestOpen(): void;
+
 type Options = {
   /**
    * Messages to ignore (won't throw), each message to ignore can be a substring or a regex
