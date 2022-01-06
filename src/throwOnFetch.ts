@@ -1,4 +1,4 @@
-const originalFetch = globalThis.fetch;
+const original = globalThis.fetch;
 
 /**
  * Makes fetch to throw if called.
@@ -13,5 +13,5 @@ export function throwOnFetch() {
  * Restores the original fetch implementation.
  */
 export function restoreFetch() {
-  globalThis.fetch = originalFetch;
+  globalThis.fetch = original;
 }

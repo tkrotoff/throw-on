@@ -28,40 +28,40 @@ function DivComponent({ children }: { children?: React.ReactNode }) {
 test('throw + restore console.error', () => {
   restoreConsoleError();
 
-  const originalConsoleError = console.error;
-  expect(originalConsoleError).toEqual(console.error);
+  const original = console.error;
+  expect(original).toEqual(console.error);
 
   throwOnConsoleError();
-  expect(originalConsoleError).not.toEqual(console.error);
+  expect(original).not.toEqual(console.error);
 
   restoreConsoleError();
-  expect(originalConsoleError).toEqual(console.error);
+  expect(original).toEqual(console.error);
 });
 
 test('throw + restore console.warn', () => {
   restoreConsoleWarn();
 
-  const originalConsoleWarn = console.warn;
-  expect(originalConsoleWarn).toEqual(console.warn);
+  const original = console.warn;
+  expect(original).toEqual(console.warn);
 
   throwOnConsoleWarn();
-  expect(originalConsoleWarn).not.toEqual(console.warn);
+  expect(original).not.toEqual(console.warn);
 
   restoreConsoleWarn();
-  expect(originalConsoleWarn).toEqual(console.warn);
+  expect(original).toEqual(console.warn);
 });
 
 test('throw + restore console.assert', () => {
   restoreConsoleAssert();
 
-  const originalConsoleAssert = console.assert;
-  expect(originalConsoleAssert).toEqual(console.assert);
+  const original = console.assert;
+  expect(original).toEqual(console.assert);
 
   throwOnConsoleAssert();
-  expect(originalConsoleAssert).not.toEqual(console.assert);
+  expect(original).not.toEqual(console.assert);
 
   restoreConsoleAssert();
-  expect(originalConsoleAssert).toEqual(console.assert);
+  expect(original).toEqual(console.assert);
 });
 
 test('throwOnConsoleAssert()', () => {

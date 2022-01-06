@@ -1,4 +1,4 @@
-const originalXHR = XMLHttpRequest.prototype.open;
+const original = XMLHttpRequest.prototype.open;
 
 /**
  * Makes XMLHttpRequest.open to throw if called.
@@ -13,5 +13,5 @@ export function throwOnXMLHttpRequestOpen() {
  * Restores the original XMLHttpRequest.open implementation.
  */
 export function restoreXMLHttpRequestOpen() {
-  XMLHttpRequest.prototype.open = originalXHR;
+  XMLHttpRequest.prototype.open = original;
 }
