@@ -49,16 +49,18 @@ import {
   throwOnConsoleAssert,
   throwOnConsoleError,
   throwOnConsoleWarn,
-  throwOnFetch
+  throwOnFetch,
+  throwOnXMLHttpRequestOpen
 } from 'throw-on';
 
 throwOnConsoleAssert();
 throwOnConsoleError();
 throwOnConsoleWarn();
 throwOnFetch();
+throwOnXMLHttpRequestOpen();
 ```
 
-Or copy-paste [throwOnConsole](src/throwOnConsole.ts) and/or [throwOnFetch](src/throwOnFetch.ts) into your source code.
+Or copy-paste [throwOnConsole](src/throwOnConsole.ts) and/or [throwOnFetch](src/throwOnFetch.ts) and/or [throwOnXMLHttpRequestOpen](src/throwOnXMLHttpRequestOpen.ts) into your source code.
 
 Requires Node.js >= 15 or a [String.replaceAll](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replaceAll) [polyfill](https://github.com/zloirock/core-js#stringreplaceall).
 
