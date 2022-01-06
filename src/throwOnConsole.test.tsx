@@ -2,6 +2,7 @@
 
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
+import assert from 'assert';
 import path from 'path';
 import { Component, createContext, useContext, useState } from 'react';
 
@@ -330,6 +331,48 @@ describe('throwOnConsoleError()', () => {
     });
     expect(() => render(<input value="John" />)).not.toThrow();
   });
+
+  test('fullStackTrace option', () => {
+    expect.assertions(5);
+
+    try {
+      render(<input value="John" />);
+    } catch (e) {
+      assert(e instanceof Error);
+      expect(e.stack).not.toContain('at throwError');
+    }
+
+    throwOnConsoleError({ fullStackTrace: false });
+    try {
+      render(<input value="John" />);
+    } catch (e) {
+      assert(e instanceof Error);
+      expect(e.stack).not.toContain('at throwError');
+    }
+
+    throwOnConsoleError({ fullStackTrace: true });
+    try {
+      render(<input value="John" />);
+    } catch (e) {
+      assert(e instanceof Error);
+      expect(e.stack).toContain('at throwError');
+    }
+
+    try {
+      render(<input value="John" />);
+    } catch (e) {
+      assert(e instanceof Error);
+      expect(e.stack).toContain('at throwError');
+    }
+
+    throwOnConsoleError();
+    try {
+      render(<input value="John" />);
+    } catch (e) {
+      assert(e instanceof Error);
+      expect(e.stack).not.toContain('at throwError');
+    }
+  });
 });
 
 describe('throwOnConsoleWarn()', () => {
@@ -380,5 +423,9 @@ describe('throwOnConsoleWarn()', () => {
     // Subsequent calls after a throw won't throw because of
     // https://github.com/facebook/react/blob/v17.0.2/packages/react-reconciler/src/ReactStrictModeWarnings.old.js#L68-L70
     expect(() => render(<MyComponent />)).not.toThrow();
+  });
+
+  test('fullStackTrace option', () => {
+    // Check throwOnConsoleError test
   });
 });

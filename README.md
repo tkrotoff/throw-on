@@ -117,8 +117,17 @@ function restoreXMLHttpRequestOpen(): void;
 
 type Options = {
   /**
-   * Messages to ignore (won't throw), each message to ignore can be a substring or a regex
+   * Messages to ignore (won't throw), each message to ignore can be a substring or a regex.
+   *
+   * Empty list by default.
    */
   ignore?: (string | RegExp)[];
+
+  /**
+   * Displays the full stack trace including the 'throwError()' part if true; this helps for debugging.
+   *
+   * False by default.
+   */
+  fullStackTrace?: boolean;
 };
 ```

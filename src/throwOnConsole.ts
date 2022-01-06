@@ -20,17 +20,28 @@ export function restoreConsoleAssert() {
 
 type Options = {
   /**
-   * Messages to ignore (won't throw), each message to ignore can be a substring or a regex
+   * Messages to ignore (won't throw), each message to ignore can be a substring or a regex.
+   *
+   * Empty list by default.
    */
   ignore?: (string | RegExp)[];
+
+  /**
+   * Displays the full stack trace including the 'throwError()' part if true; this helps for debugging.
+   *
+   * False by default.
+   */
+  fullStackTrace?: boolean;
 };
 
-function throwError(consoleMethod: () => void, options?: Options, ...data: any[]) {
+function throwError(consoleMethod: () => void, options: Options = {}, ...data: any[]) {
+  const ignore = options.ignore ?? [];
+  const fullStackTrace = options.fullStackTrace ?? false;
+
   let message = format(...data);
 
-  const ignore = options?.ignore;
   if (
-    ignore?.some(msgToIgnore =>
+    ignore.some(msgToIgnore =>
       typeof msgToIgnore === 'string' ? message.includes(msgToIgnore) : message.match(msgToIgnore)
     )
   ) {
@@ -59,7 +70,7 @@ function throwError(consoleMethod: () => void, options?: Options, ...data: any[]
     //
     // > The optional constructorOpt argument accepts a function.
     // > If given, all frames above constructorOpt, including constructorOpt, will be omitted from the generated stack trace.
-    consoleMethod
+    fullStackTrace ? undefined : consoleMethod
   );
 
   throw e;
