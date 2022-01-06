@@ -1,3 +1,9 @@
+## 0.3.0 (2022/01/06)
+
+- Fix "ReferenceError: XMLHttpRequest is not defined"
+- Extract throwOnXMLHttpRequestOpen()
+- New fullStackTrace option
+
 ## 0.2.2 (2022/01/06)
 
 - Bundlephobia does not support optional chaining (?.): https://github.com/pastelsky/bundlephobia/issues/413
