@@ -47,11 +47,11 @@ function throwError(
 
   let message = format(...data);
 
-  if (
-    ignore.some(msgToIgnore =>
-      typeof msgToIgnore === 'string' ? message.includes(msgToIgnore) : message.match(msgToIgnore)
-    )
-  ) {
+  const shouldNotThrow = ignore.some(msgToIgnore =>
+    typeof msgToIgnore === 'string' ? message.includes(msgToIgnore) : message.match(msgToIgnore)
+  );
+
+  if (shouldNotThrow) {
     originalConsoleMethod(...data);
   } else {
     // React adds its own stack trace to the console.error() message:
