@@ -48,6 +48,7 @@ test('throwOnConsoleError() Jest output fix', () => {
   //     at checkControlledValueProps (node_modules/react-dom/cjs/react-dom.development.js:1323:7)
   //     at initWrapperState (node_modules/react-dom/cjs/react-dom.development.js:1495:5)
   //     at setInitialProperties (node_modules/react-dom/cjs/react-dom.development.js:9099:7)
+  //
   throwOnConsoleError({
     ignore: ['You provided a `value` prop to a form field without an `onChange` handler']
   });
@@ -108,6 +109,7 @@ test('throwOnConsoleWarn() Jest output fix', () => {
   //     at Object.<anonymous>.ReactStrictModeWarnings.flushPendingUnsafeLifecycleWarnings (node_modules/react-dom/cjs/react-dom.development.js:11530:7)
   //     at flushRenderPhaseStrictModeWarningsInDEV (node_modules/react-dom/cjs/react-dom.development.js:23822:31)
   //     at commitRootImpl (node_modules/react-dom/cjs/react-dom.development.js:23005:3)
+  //
   throwOnConsoleWarn({ ignore: ['componentWillReceiveProps has been renamed'] });
   expect(() => render(<MyComponent />)).not.toThrow();
 });

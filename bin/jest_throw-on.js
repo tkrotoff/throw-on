@@ -37,7 +37,17 @@ BufferedConsole.write = (buffer, type, message, level) => {
 
   invariant(rawStack, 'always have a stack trace');
 
-  if (rawStack.match(/.*throwOnConsole.*/) === null) {
+  // Examples:
+  //
+  // at throwError (src/throwOnConsole.ts:55:5)
+  // at console.warn (src/throwOnConsole.ts:112:5)
+  // at printWarning (node_modules/react-dom/cjs/react-dom.development.js:67:30)
+  //
+  // at throwError (node_modules/throw-on/dist/cjs/throwOnConsole.js:33:1)
+  // at console.error (node_modules/throw-on/dist/cjs/throwOnConsole.js:63:1)
+  // at printWarning (node_modules/react-test-renderer/cjs/react-test-renderer.development.js:68:1)
+  //
+  if (!rawStack.includes('throwOnConsole.')) {
     // Nothing to do
     return originalBufferedConsoleWrite(buffer, type, message, level);
   }
