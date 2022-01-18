@@ -16,7 +16,9 @@
   "files": [
     "dist/"
   ],
-  "bin": "bin/jest_throw-on.js",
+  "bin": {
+    "jest_throw-on": "bin/jest_throw-on.js"
+  },
   "sideEffects": false,
   "scripts": {
     "clean": "rm -rf dist coverage",
