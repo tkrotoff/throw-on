@@ -1,3 +1,7 @@
+## 0.4.1 (2022/01/18)
+
+- Fix executable path: .bin/jest_throw-on instead of .bin/throw-on
+
 ## 0.4.0 (2022/01/18)
 
 - Call the original console method if the message is ignored
