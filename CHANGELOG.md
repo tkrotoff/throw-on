@@ -1,3 +1,8 @@
+## 0.4.0 (2022/01/18)
+
+- Call the original console method if the message is ignored
+- New executable `jest_throw-on` that fixes the Jest output when using the `ignore` option
+
 ## 0.3.0 (2022/01/06)
 
 - Fix "ReferenceError: XMLHttpRequest is not defined"
