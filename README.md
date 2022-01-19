@@ -64,21 +64,6 @@ Or copy-paste [throwOnConsole](src/throwOnConsole.ts) and/or [throwOnFetch](src/
 
 Requires Node.js >= 15 or a [String.replaceAll](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replaceAll) [polyfill](https://github.com/zloirock/core-js#stringreplaceall).
 
-### Jest
-
-Optionally, use [`jest_throw-on`](bin/jest_throw-on.js) instead of calling `jest`:
-
-```JavaScript
-// package.json
-
-  "scripts": {
-    "test": "jest_throw-on --verbose",
-    "test:coverage": "jest_throw-on --coverage"
-  }
-```
-
-This fixes the Jest output when using the `ignore` option by excluding throw-on source code from the stack trace.
-
 ## API
 
 ```TypeScript
@@ -148,3 +133,8 @@ type Options = {
   fullStackTrace?: boolean;
 };
 ```
+
+### Limitations
+
+When using the `ignore` option, the stack trace displayed by Jest includes an extra line corresponding to throw-on source code.
+I did not find a solution, here is an attempt: https://github.com/tkrotoff/throw-on/pull/1

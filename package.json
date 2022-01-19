@@ -16,9 +16,6 @@
   "files": [
     "dist/"
   ],
-  "bin": {
-    "jest_throw-on": "bin/jest_throw-on.js"
-  },
   "sideEffects": false,
   "scripts": {
     "clean": "rm -rf dist coverage",
@@ -30,8 +27,8 @@
     "tsc": "tsc",
     "eslint": "eslint . '**/*.{js,jsx,ts,tsx}'",
     "lint": "npm run tsc && npm run eslint",
-    "test": "bin/jest_throw-on.js --verbose",
-    "test:coverage": "bin/jest_throw-on.js --coverage",
+    "test": "jest --verbose",
+    "test:coverage": "jest --coverage",
     "prepare": "husky install",
     "precommit": "npm run lint",
     "prepush": "npm run lint && npm run test",
