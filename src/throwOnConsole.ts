@@ -10,6 +10,7 @@ type Options = {
 
   /**
    * Displays the full stack trace including the 'throwError()' part if true; this helps for debugging.
+   * Works only under V8.
    *
    * False by default.
    */
@@ -72,14 +73,17 @@ function throwError(message: string, overriddenConsoleMethod: ConsoleMethod, opt
 
   const e = new Error(msg);
 
-  Error.captureStackTrace(
-    e,
-    // https://nodejs.org/docs/latest-v16.x/api/errors.html#errorcapturestacktracetargetobject-constructoropt
-    //
-    // > The optional constructorOpt argument accepts a function.
-    // > If given, all frames above constructorOpt, including constructorOpt, will be omitted from the generated stack trace.
-    fullStackTrace ? undefined : overriddenConsoleMethod
-  );
+  // Error.captureStackTrace() is only supported on V8
+  if (Error.captureStackTrace) {
+    Error.captureStackTrace(
+      e,
+      // https://nodejs.org/docs/latest-v16.x/api/errors.html#errorcapturestacktracetargetobject-constructoropt
+      //
+      // > The optional constructorOpt argument accepts a function.
+      // > If given, all frames above constructorOpt, including constructorOpt, will be omitted from the generated stack trace.
+      fullStackTrace ? undefined : overriddenConsoleMethod
+    );
+  }
 
   throw e;
 }

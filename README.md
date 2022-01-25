@@ -101,6 +101,7 @@ type Options = {
 
   /**
    * Displays the full stack trace including the 'throwError()' part if true; this helps for debugging.
+   * Works only under V8.
    *
    * False by default.
    */

@@ -484,3 +484,28 @@ describe('console.warn', () => {
     // Check console.error test
   });
 });
+
+test('with Error.captureStackTrace (V8) vs without', () => {
+  expect.assertions(4);
+
+  throwOnConsole('error');
+
+  const original = Error.captureStackTrace;
+  (Error.captureStackTrace as any) = undefined;
+  try {
+    console.error('error message');
+  } catch (e) {
+    assert(e instanceof Error);
+    expect(e.stack).toContain('at throwError');
+    expect(e.stack).toContain('at console.error');
+  }
+  Error.captureStackTrace = original;
+
+  try {
+    console.error('error message');
+  } catch (e) {
+    assert(e instanceof Error);
+    expect(e.stack).not.toContain('at throwError');
+    expect(e.stack).not.toContain('at console.error');
+  }
+});
