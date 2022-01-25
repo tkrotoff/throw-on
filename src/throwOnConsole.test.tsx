@@ -9,9 +9,11 @@ import { Component, createContext, useContext, useState } from 'react';
 import {
   restoreConsoleAssert,
   restoreConsoleError,
+  restoreConsoleLog,
   restoreConsoleWarn,
   throwOnConsoleAssert,
   throwOnConsoleError,
+  throwOnConsoleLog,
   throwOnConsoleWarn
 } from './throwOnConsole';
 import { wait } from './wait';
@@ -63,6 +65,19 @@ test('throw + restore console.warn', () => {
 
   restoreConsoleWarn();
   expect(original).toEqual(console.warn);
+});
+
+test('throw + restore console.log', () => {
+  restoreConsoleLog();
+
+  const original = console.log;
+  expect(original).toEqual(console.log);
+
+  throwOnConsoleLog();
+  expect(original).not.toEqual(console.log);
+
+  restoreConsoleLog();
+  expect(original).toEqual(console.log);
 });
 
 describe('throwOnConsoleAssert()', () => {
@@ -464,6 +479,28 @@ describe('throwOnConsoleWarn()', () => {
     // Subsequent calls after a throw won't throw because of
     // https://github.com/facebook/react/blob/v17.0.2/packages/react-reconciler/src/ReactStrictModeWarnings.old.js#L68-L70
     expect(() => render(<MyComponent />)).not.toThrow();
+  });
+
+  test('fullStackTrace option', () => {
+    // Check throwOnConsoleError test
+  });
+});
+
+describe('throwOnConsoleLog()', () => {
+  test('throw', () => {
+    throwOnConsoleLog();
+
+    expect(() => console.log('log message')).toThrow('log message');
+
+    restoreConsoleLog();
+  });
+
+  test('ignore option', () => {
+    throwOnConsoleLog({ ignore: ['log message'] });
+    expect(() => console.log('log message')).not.toThrow();
+
+    throwOnConsoleLog({ ignore: [] });
+    expect(() => console.log('log message')).toThrow('log message');
   });
 
   test('fullStackTrace option', () => {

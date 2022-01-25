@@ -70,12 +70,13 @@ throwOnXMLHttpRequestOpen();
 
 ```TypeScript
 // Inside your entry file (something like index.js or app.js)
-import { throwOnConsoleAssert, throwOnConsoleError, throwOnConsoleWarn } from 'throw-on';
+import { throwOnConsoleAssert, throwOnConsoleError, throwOnConsoleWarn, throwOnConsoleLog } from 'throw-on';
 
 if (process.env.NODE_ENV !== 'production') { // You probably don't want this in production
   throwOnConsoleAssert();
   throwOnConsoleError();
   throwOnConsoleWarn();
+  throwOnConsoleLog();
 }
 ```
 
@@ -121,6 +122,16 @@ function throwOnConsoleWarn(options?: Options): void;
  * Restores the original console.error implementation.
  */
 function restoreConsoleWarn(): void;
+
+/**
+ * Makes console.log to throw if called.
+ */
+function throwOnConsoleLog(options?: Options): void;
+
+/**
+ * Restores the original console.log implementation.
+ */
+function restoreConsoleLog(): void;
 
 /**
  * Makes fetch to throw if called.

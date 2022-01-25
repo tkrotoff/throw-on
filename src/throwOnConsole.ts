@@ -16,7 +16,7 @@ type Options = {
   fullStackTrace?: boolean;
 };
 
-type ConsoleMethod = typeof console['assert' | 'error' | 'warn'];
+type ConsoleMethod = typeof console['assert' | 'error' | 'warn' | 'log'];
 
 function throwError(message: string, overriddenConsoleMethod: ConsoleMethod, options: Options) {
   const fullStackTrace = options.fullStackTrace ?? false;
@@ -132,4 +132,27 @@ export function throwOnConsoleWarn(options: Options = {}) {
  */
 export function restoreConsoleWarn() {
   console.warn = originalConsoleWarn;
+}
+
+const originalConsoleLog = console.log;
+
+/**
+ * Makes console.log to throw if called.
+ */
+export function throwOnConsoleLog(options: Options = {}) {
+  console.log = (...data: any[]) => {
+    const { shouldNotThrow, message } = formatMessage(options, ...data);
+    if (shouldNotThrow) {
+      originalConsoleLog(message);
+    } else {
+      throwError(message, console.log, options);
+    }
+  };
+}
+
+/**
+ * Restores the original console.log implementation.
+ */
+export function restoreConsoleLog() {
+  console.log = originalConsoleLog;
 }

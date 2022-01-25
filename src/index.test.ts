@@ -11,6 +11,9 @@ test('functions are exported', () => {
     throwOnConsoleWarn: expect.any(Function),
     restoreConsoleWarn: expect.any(Function),
 
+    throwOnConsoleLog: expect.any(Function),
+    restoreConsoleLog: expect.any(Function),
+
     throwOnFetch: expect.any(Function),
     restoreFetch: expect.any(Function),
 
