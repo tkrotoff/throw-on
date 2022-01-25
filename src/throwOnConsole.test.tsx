@@ -11,8 +11,10 @@ import { wait } from './wait';
 
 const filename = path.basename(__filename);
 
-function at_Component_filename_lineNumber_dot(componentName: string) {
-  return `    at ${componentName} \\(.*${filename}:\\d+:\\d+\\)\\.`;
+const space = '\u200B';
+
+function at_Component_filename_lineNumber_space(componentName: string) {
+  return `    at ${componentName} \\(.*${filename}:\\d+:\\d+\\)\\${space}`;
 }
 
 function DivComponent({ children }: { children?: React.ReactNode }) {
@@ -123,7 +125,7 @@ describe('console.error', () => {
     ).toThrow(
       new RegExp(
         '^Warning: Each child in a list should have a unique "key" prop.*' +
-          `${at_Component_filename_lineNumber_dot(DivComponent.name)}$`,
+          `${at_Component_filename_lineNumber_space(DivComponent.name)}$`,
         's'
       )
     );
@@ -143,7 +145,7 @@ describe('console.error', () => {
       new RegExp(
         '^Warning: Encountered two children with the same key, `0`.*' +
           `    at div\n` +
-          `${at_Component_filename_lineNumber_dot(DivComponent.name)}$`,
+          `${at_Component_filename_lineNumber_space(DivComponent.name)}$`,
         's'
       )
     );
@@ -165,7 +167,7 @@ describe('console.error', () => {
         expect(() => setState('Update state')).toThrow(
           new RegExp(
             `^Warning: Can't perform a React state update on an unmounted component.*` +
-              `${at_Component_filename_lineNumber_dot(MyComponent.name)}$`,
+              `${at_Component_filename_lineNumber_space(MyComponent.name)}$`,
             's'
           )
         );
@@ -238,8 +240,8 @@ describe('console.error', () => {
     expect(() => render(<Parent />)).toThrow(
       new RegExp(
         '^Warning: Cannot update a component \\(`Parent`\\) while rendering a different component \\(`Child`\\).*' +
-          `${at_Component_filename_lineNumber_dot(Child.name)}\n` +
-          `${at_Component_filename_lineNumber_dot(Parent.name)}$`,
+          `${at_Component_filename_lineNumber_space(Child.name)}\n` +
+          `${at_Component_filename_lineNumber_space(Parent.name)}$`,
         's'
       )
     );
@@ -272,7 +274,7 @@ describe('console.error', () => {
     expect(() => rerender(<MyComponent />)).toThrow(
       new RegExp(
         '^Warning: React has detected a change in the order of Hooks called by MyComponent.*' +
-          `${at_Component_filename_lineNumber_dot(MyComponent.name)}$`,
+          `${at_Component_filename_lineNumber_space(MyComponent.name)}$`,
         's'
       )
     );
@@ -296,7 +298,7 @@ describe('console.error', () => {
     expect(() => fireEvent.change(input, { target: { value: 'John' } })).toThrow(
       new RegExp(
         '^Warning: A component is changing an uncontrolled input to be controlled.*' +
-          `${at_Component_filename_lineNumber_dot(MyComponent.name)}$`,
+          `${at_Component_filename_lineNumber_space(MyComponent.name)}$`,
         's'
       )
     );
