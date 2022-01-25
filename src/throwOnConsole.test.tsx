@@ -26,6 +26,19 @@ function DivComponent({ children }: { children?: React.ReactNode }) {
   return <div>{children}</div>;
 }
 
+test('throw + restore console.assert', () => {
+  restoreConsoleAssert();
+
+  const original = console.assert;
+  expect(original).toEqual(console.assert);
+
+  throwOnConsoleAssert();
+  expect(original).not.toEqual(console.assert);
+
+  restoreConsoleAssert();
+  expect(original).toEqual(console.assert);
+});
+
 test('throw + restore console.error', () => {
   restoreConsoleError();
 
@@ -52,25 +65,30 @@ test('throw + restore console.warn', () => {
   expect(original).toEqual(console.warn);
 });
 
-test('throw + restore console.assert', () => {
-  restoreConsoleAssert();
+describe('throwOnConsoleAssert()', () => {
+  test('condition', () => {
+    throwOnConsoleAssert();
 
-  const original = console.assert;
-  expect(original).toEqual(console.assert);
+    expect(() => console.assert(true, 'assert message')).not.toThrow();
+    expect(() => assert(true, 'assert message')).not.toThrow();
 
-  throwOnConsoleAssert();
-  expect(original).not.toEqual(console.assert);
+    expect(() => console.assert(false, 'assert message')).toThrow('assert message');
+    expect(() => assert(false, 'assert message')).toThrow('assert message');
 
-  restoreConsoleAssert();
-  expect(original).toEqual(console.assert);
-});
+    restoreConsoleAssert();
+  });
 
-test('throwOnConsoleAssert()', () => {
-  throwOnConsoleAssert();
+  test('ignore option', () => {
+    throwOnConsoleAssert({ ignore: ['assert message'] });
+    expect(() => console.assert(false, 'assert message')).not.toThrow();
 
-  expect(() => console.assert(false, 'error message')).toThrow('error message');
+    throwOnConsoleAssert({ ignore: [] });
+    expect(() => console.assert(false, 'assert message')).toThrow('assert message');
+  });
 
-  restoreConsoleAssert();
+  test('fullStackTrace option', () => {
+    // Check throwOnConsoleError test
+  });
 });
 
 describe('throwOnConsoleError()', () => {

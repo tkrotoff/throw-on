@@ -1,22 +1,4 @@
-import assert from 'assert';
 import { format } from 'util';
-
-const originalConsoleAssert = console.assert;
-
-/**
- * Makes console.assert to throw if called.
- */
-export function throwOnConsoleAssert() {
-  // [console.assert not throwing with v22.4.0](https://github.com/facebook/jest/issues/5634)
-  console.assert = assert;
-}
-
-/**
- * Restores the original console.assert implementation.
- */
-export function restoreConsoleAssert() {
-  console.assert = originalConsoleAssert;
-}
 
 type Options = {
   /**
@@ -34,7 +16,7 @@ type Options = {
   fullStackTrace?: boolean;
 };
 
-type ConsoleMethod = typeof console['error' | 'warn'];
+type ConsoleMethod = typeof console['assert' | 'error' | 'warn'];
 
 function throwError(message: string, overriddenConsoleMethod: ConsoleMethod, options: Options) {
   const fullStackTrace = options.fullStackTrace ?? false;
@@ -81,6 +63,29 @@ function formatMessage(options: Options, ...data: any[]) {
     ),
     message
   };
+}
+
+const originalConsoleAssert = console.assert;
+
+/**
+ * Makes console.assert to throw if called.
+ */
+export function throwOnConsoleAssert(options: Options = {}) {
+  console.assert = (condition?: boolean, ...data: any[]) => {
+    if (!condition) {
+      const { shouldNotThrow, message } = formatMessage(options, ...data);
+      if (!shouldNotThrow) {
+        throwError(message, console.assert, options);
+      }
+    }
+  };
+}
+
+/**
+ * Restores the original console.assert implementation.
+ */
+export function restoreConsoleAssert() {
+  console.assert = originalConsoleAssert;
 }
 
 const originalConsoleError = console.error;

@@ -70,7 +70,7 @@ Requires Node.js >= 15 or a [String.replaceAll](https://developer.mozilla.org/en
 /**
  * Makes console.assert to throw if called.
  */
-function throwOnConsoleAssert(): void;
+function throwOnConsoleAssert(options?: Options): void;
 
 /**
  * Restores the original console.assert implementation.
