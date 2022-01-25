@@ -9,12 +9,13 @@ import { Component, createContext, useContext, useState } from 'react';
 import { restoreConsole, throwOnConsole } from './throwOnConsole';
 import { wait } from './wait';
 
-const filename = path.basename(__filename);
-
 const space = '\u200B';
 
-function at_Component_filename_lineNumber_space(componentName: string) {
-  return `    at ${componentName} \\(.*${filename}:\\d+:\\d+\\)\\${space}`;
+function space_at_Component_filename_lineNumber_space(
+  componentName: string,
+  filename = path.basename(__filename)
+) {
+  return `${space}    at ${componentName} \\(.*${filename}:\\d+:\\d+\\)${space}`;
 }
 
 function DivComponent({ children }: { children?: React.ReactNode }) {
@@ -114,7 +115,19 @@ describe('console.error', () => {
     const { increment } = result.current;
 
     expect(() => increment()).toThrow(
-      /^Warning: An update to TestComponent inside a test was not wrapped in act.*/s
+      new RegExp(
+        '^Warning: An update to TestComponent inside a test was not wrapped in act.*\n\n' +
+          'When testing, code that causes React state updates should be wrapped into act.*\n\n' +
+          'act.*\n' +
+          '  /.*\n' +
+          '}.*\n' +
+          '.*\n\n' +
+          "This ensures that you're testing the behavior the user would see in the browser.*\n" +
+          `${space_at_Component_filename_lineNumber_space('TestComponent', '.*')}\n` +
+          `${space}    at Suspense${space}\n` +
+          `${space_at_Component_filename_lineNumber_space('ErrorBoundary', '.*')}$`,
+        's'
+      )
     );
   });
 
@@ -124,8 +137,8 @@ describe('console.error', () => {
       render(<DivComponent>{[<DivComponent />, <DivComponent />]}</DivComponent>)
     ).toThrow(
       new RegExp(
-        '^Warning: Each child in a list should have a unique "key" prop.*' +
-          `${at_Component_filename_lineNumber_space(DivComponent.name)}$`,
+        '^Warning: Each child in a list should have a unique "key" prop.*\n' +
+          `${space_at_Component_filename_lineNumber_space(DivComponent.name)}$`,
         's'
       )
     );
@@ -143,9 +156,9 @@ describe('console.error', () => {
       render(<DivComponent>{[<DivComponent key="0" />, <DivComponent key="0" />]}</DivComponent>)
     ).toThrow(
       new RegExp(
-        '^Warning: Encountered two children with the same key, `0`.*' +
-          `    at div\n` +
-          `${at_Component_filename_lineNumber_space(DivComponent.name)}$`,
+        '^Warning: Encountered two children with the same key, `0`.*\n' +
+          `${space}    at div${space}\n` +
+          `${space_at_Component_filename_lineNumber_space(DivComponent.name)}$`,
         's'
       )
     );
@@ -166,8 +179,8 @@ describe('console.error', () => {
         // @ts-ignore
         expect(() => setState('Update state')).toThrow(
           new RegExp(
-            `^Warning: Can't perform a React state update on an unmounted component.*` +
-              `${at_Component_filename_lineNumber_space(MyComponent.name)}$`,
+            `^Warning: Can't perform a React state update on an unmounted component.*\n` +
+              `${space_at_Component_filename_lineNumber_space(MyComponent.name)}$`,
             's'
           )
         );
@@ -196,10 +209,10 @@ describe('console.error', () => {
     // @ts-ignore
     expect(() => render(<div unknownProp="value" />)).toThrow(
       new RegExp(
-        'Warning: React does not recognize the `unknownProp` prop on a DOM element.' +
+        '^Warning: React does not recognize the `unknownProp` prop on a DOM element.' +
           ' If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `unknownprop` instead.' +
           ' If you accidentally passed it from a parent component, remove it from the DOM element.\n' +
-          '    at div',
+          `${space}    at div${space}$`,
         's'
       )
     );
@@ -215,7 +228,8 @@ describe('console.error', () => {
   test('Invalid DOM property', () => {
     // @ts-ignore
     expect(() => render(<div class="invalid" />)).toThrow(
-      'Warning: Invalid DOM property `class`. Did you mean `className`?\n    at div'
+      'Warning: Invalid DOM property `class`. Did you mean `className`?\n' +
+        `${space}    at div${space}`
     );
 
     // React does not display this warning message if it has already been displayed
@@ -239,9 +253,9 @@ describe('console.error', () => {
 
     expect(() => render(<Parent />)).toThrow(
       new RegExp(
-        '^Warning: Cannot update a component \\(`Parent`\\) while rendering a different component \\(`Child`\\).*' +
-          `${at_Component_filename_lineNumber_space(Child.name)}\n` +
-          `${at_Component_filename_lineNumber_space(Parent.name)}$`,
+        '^Warning: Cannot update a component \\(`Parent`\\) while rendering a different component \\(`Child`\\).*\n' +
+          `${space_at_Component_filename_lineNumber_space(Child.name)}\n` +
+          `${space_at_Component_filename_lineNumber_space(Parent.name)}$`,
         's'
       )
     );
@@ -273,8 +287,8 @@ describe('console.error', () => {
 
     expect(() => rerender(<MyComponent />)).toThrow(
       new RegExp(
-        '^Warning: React has detected a change in the order of Hooks called by MyComponent.*' +
-          `${at_Component_filename_lineNumber_space(MyComponent.name)}$`,
+        '^Warning: React has detected a change in the order of Hooks called by MyComponent.*\n' +
+          `${space_at_Component_filename_lineNumber_space(MyComponent.name)}$`,
         's'
       )
     );
@@ -297,8 +311,8 @@ describe('console.error', () => {
 
     expect(() => fireEvent.change(input, { target: { value: 'John' } })).toThrow(
       new RegExp(
-        '^Warning: A component is changing an uncontrolled input to be controlled.*' +
-          `${at_Component_filename_lineNumber_space(MyComponent.name)}$`,
+        '^Warning: A component is changing an uncontrolled input to be controlled.*\n' +
+          `${space_at_Component_filename_lineNumber_space(MyComponent.name)}$`,
         's'
       )
     );
@@ -307,8 +321,8 @@ describe('console.error', () => {
   test('You provided a `value` prop to a form field without an `onChange` handler', () => {
     expect(() => render(<input value="John" />)).toThrow(
       new RegExp(
-        '^Warning: You provided a `value` prop to a form field without an `onChange` handler.*' +
-          '    at input',
+        '^Warning: You provided a `value` prop to a form field without an `onChange` handler.*\n' +
+          `${space}    at input${space}$`,
         's'
       )
     );
@@ -320,7 +334,8 @@ describe('console.error', () => {
   test('Unsupported style property', () => {
     // @ts-ignore
     expect(() => render(<div style={{ 'background-color': 'black' }} />)).toThrow(
-      'Warning: Unsupported style property background-color. Did you mean backgroundColor?\n    at div'
+      'Warning: Unsupported style property background-color. Did you mean backgroundColor?\n' +
+        `${space}    at div${space}`
     );
 
     // React does not display this warning message if it has already been displayed
@@ -412,7 +427,7 @@ describe('console.warn', () => {
 
     expect(() => render(<MyComponent />)).toThrow(
       new RegExp(
-        '^Warning: componentWillMount has been renamed, and is not recommended for use.*' +
+        '^Warning: componentWillMount has been renamed, and is not recommended for use.*\n' +
           'Please update the following components: MyComponent$',
         's'
       )
@@ -435,7 +450,7 @@ describe('console.warn', () => {
 
     expect(() => render(<MyComponent />)).toThrow(
       new RegExp(
-        '^Warning: componentWillUpdate has been renamed, and is not recommended for use.*' +
+        '^Warning: componentWillUpdate has been renamed, and is not recommended for use.*\n' +
           'Please update the following components: MyComponent$',
         's'
       )
