@@ -13,10 +13,12 @@ Force console.error and network requests to fail.
 - No dependencies
 - Fully tested
 - Written in TypeScript
+- Works with Node.js and browsers
+- Generic: not specific to React
 
 ## Why?
 
-Do you have warnings like _"An update inside a test was not wrapped in act"_ or _"Can't perform a React state update on an unmounted component"_ when running your React app tests?
+Do you have warnings like _"An update inside a test was not wrapped in act"_ or _"Can't perform a React state update on an unmounted component"_ when running your React app?
 
 Are your tests performing network requests when they shouldn't?
 
@@ -41,10 +43,12 @@ Result:
 
 ## Usage
 
+### For your tests
+
 `npm install --save-dev throw-on`
 
 ```TypeScript
-// Inside jest.setup.js for example
+// Inside jest.setup.js (Jest setupFilesAfterEnv option) for example
 import {
   throwOnConsoleAssert,
   throwOnConsoleError,
@@ -60,9 +64,30 @@ throwOnFetch();
 throwOnXMLHttpRequestOpen();
 ```
 
-Or copy-paste [throwOnConsole](src/throwOnConsole.ts) and/or [throwOnFetch](src/throwOnFetch.ts) and/or [throwOnXMLHttpRequestOpen](src/throwOnXMLHttpRequestOpen.ts) into your source code.
+## In the browser
+
+`npm install throw-on`
+
+```TypeScript
+// Inside your entry file (something like index.js or app.js)
+import { throwOnConsoleAssert, throwOnConsoleError, throwOnConsoleWarn } from 'throw-on';
+
+if (process.env.NODE_ENV !== 'production') { // You probably don't want this in production
+  throwOnConsoleAssert();
+  throwOnConsoleError();
+  throwOnConsoleWarn();
+}
+```
+
+### Make it your own
+
+Copy-paste [throwOnConsole.ts](src/throwOnConsole.ts) and/or [throwOnFetch.ts](src/throwOnFetch.ts) and/or [throwOnXMLHttpRequestOpen.ts](src/throwOnXMLHttpRequestOpen.ts) into your source code.
+
+### Platform support
 
 Requires Node.js >= 15 or a [String.replaceAll](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replaceAll) [polyfill](https://github.com/zloirock/core-js#stringreplaceall).
+
+Transpilation to ES5 (via Babel for example) is needed for non-modern browsers.
 
 ## API
 
