@@ -1,13 +1,6 @@
-import {
-  throwOnConsoleAssert,
-  throwOnConsoleError,
-  throwOnConsoleWarn,
-  throwOnFetch,
-  throwOnXMLHttpRequestOpen
-} from './src';
+import { throwOnConsoleAssert, throwOnConsoleError, throwOnConsoleWarn, throwOnFetch } from './src';
 
 throwOnConsoleAssert();
 throwOnConsoleError();
 throwOnConsoleWarn();
 throwOnFetch();
-throwOnXMLHttpRequestOpen();

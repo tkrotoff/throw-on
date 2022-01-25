@@ -1,5 +1,3 @@
-import assert from 'assert';
-
 // XMLHttpRequest is undefined under Node.js if not polyfilled
 // and thus accessing XMLHttpRequest.prototype.open fails when importing this file
 //const original = XMLHttpRequest.prototype.open;
@@ -22,6 +20,9 @@ export function throwOnXMLHttpRequestOpen() {
  * Restores the original XMLHttpRequest.open implementation.
  */
 export function restoreXMLHttpRequestOpen() {
-  assert(original !== undefined, 'Call throwOnXMLHttpRequestOpen first');
+  if (original === undefined) {
+    throw new Error('Call throwOnXMLHttpRequestOpen() first');
+  }
+
   XMLHttpRequest.prototype.open = original;
 }
