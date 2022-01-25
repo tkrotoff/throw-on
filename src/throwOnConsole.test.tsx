@@ -2,8 +2,8 @@
 
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
-import assert from 'assert';
-import path from 'path';
+import assert from 'node:assert';
+import path from 'node:path';
 import { Component, createContext, useContext, useState } from 'react';
 
 import { restoreConsole, throwOnConsole } from './throwOnConsole';

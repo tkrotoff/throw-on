@@ -1,4 +1,4 @@
-import { format as nodeFormat } from 'util';
+import { format as nodeFormat } from 'node:util';
 
 import { format } from './format';
 
