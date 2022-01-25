@@ -50,16 +50,14 @@ Result:
 ```TypeScript
 // Inside jest.setup.js (Jest setupFilesAfterEnv option) for example
 import {
-  throwOnConsoleAssert,
-  throwOnConsoleError,
-  throwOnConsoleWarn,
+  throwOnConsole,
   throwOnFetch,
   throwOnXMLHttpRequestOpen
 } from 'throw-on';
 
-throwOnConsoleAssert();
-throwOnConsoleError();
-throwOnConsoleWarn();
+throwOnConsole('assert');
+throwOnConsole('error');
+throwOnConsole('warn');
 throwOnFetch();
 throwOnXMLHttpRequestOpen();
 ```
@@ -70,13 +68,13 @@ throwOnXMLHttpRequestOpen();
 
 ```TypeScript
 // Inside your entry file (something like index.js or app.js)
-import { throwOnConsoleAssert, throwOnConsoleError, throwOnConsoleWarn, throwOnConsoleLog } from 'throw-on';
+import { throwOnConsole } from 'throw-on';
 
 if (process.env.NODE_ENV !== 'production') { // You probably don't want this in production
-  throwOnConsoleAssert();
-  throwOnConsoleError();
-  throwOnConsoleWarn();
-  throwOnConsoleLog();
+  throwOnConsole('assert');
+  throwOnConsole('error');
+  throwOnConsole('warn');
+  throwOnConsole('log');
 }
 ```
 
@@ -93,45 +91,33 @@ Transpilation to ES5 (via Babel for example) is needed for non-modern browsers.
 ## API
 
 ```TypeScript
-/**
- * Makes console.assert to throw if called.
- */
-function throwOnConsoleAssert(options?: Options): void;
+type Options = {
+  /**
+   * Messages to ignore (won't throw), each message to ignore can be a substring or a regex.
+   *
+   * Empty list by default.
+   */
+  ignore?: (string | RegExp)[];
+
+  /**
+   * Displays the full stack trace including the 'throwError()' part if true; this helps for debugging.
+   *
+   * False by default.
+   */
+  fullStackTrace?: boolean;
+};
+
+type ConsoleMethodName = 'assert' | 'error' | 'warn' | 'info' | 'log' | 'dir' | 'debug';
 
 /**
- * Restores the original console.assert implementation.
+ * Makes console method to throw if called.
  */
-function restoreConsoleAssert(): void;
+function throwOnConsole(methodName: ConsoleMethodName, options: Options = {}): void;
 
 /**
- * Makes console.error to throw if called.
+ * Restores the original console method implementation.
  */
-function throwOnConsoleError(options?: Options): void;
-
-/**
- * Restores the original console.error implementation.
- */
-function restoreConsoleError(): void;
-
-/**
- * Makes console.warn to throw if called.
- */
-function throwOnConsoleWarn(options?: Options): void;
-
-/**
- * Restores the original console.error implementation.
- */
-function restoreConsoleWarn(): void;
-
-/**
- * Makes console.log to throw if called.
- */
-function throwOnConsoleLog(options?: Options): void;
-
-/**
- * Restores the original console.log implementation.
- */
-function restoreConsoleLog(): void;
+function restoreConsole(methodName: ConsoleMethodName): void;
 
 /**
  * Makes fetch to throw if called.
@@ -152,22 +138,6 @@ function throwOnXMLHttpRequestOpen(): void;
  * Restores the original XMLHttpRequest.open implementation.
  */
 function restoreXMLHttpRequestOpen(): void;
-
-type Options = {
-  /**
-   * Messages to ignore (won't throw), each message to ignore can be a substring or a regex.
-   *
-   * Empty list by default.
-   */
-  ignore?: (string | RegExp)[];
-
-  /**
-   * Displays the full stack trace including the 'throwError()' part if true; this helps for debugging.
-   *
-   * False by default.
-   */
-  fullStackTrace?: boolean;
-};
 ```
 
 ### Limitations

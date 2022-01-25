@@ -1,6 +1,6 @@
-import { throwOnConsoleAssert, throwOnConsoleError, throwOnConsoleWarn, throwOnFetch } from './src';
+import { throwOnConsole, throwOnFetch } from './src';
 
-throwOnConsoleAssert();
-throwOnConsoleError();
-throwOnConsoleWarn();
+throwOnConsole('assert');
+throwOnConsole('error');
+throwOnConsole('warn');
 throwOnFetch();

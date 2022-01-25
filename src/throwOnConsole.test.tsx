@@ -6,16 +6,7 @@ import assert from 'assert';
 import path from 'path';
 import { Component, createContext, useContext, useState } from 'react';
 
-import {
-  restoreConsoleAssert,
-  restoreConsoleError,
-  restoreConsoleLog,
-  restoreConsoleWarn,
-  throwOnConsoleAssert,
-  throwOnConsoleError,
-  throwOnConsoleLog,
-  throwOnConsoleWarn
-} from './throwOnConsole';
+import { restoreConsole, throwOnConsole } from './throwOnConsole';
 import { wait } from './wait';
 
 const filename = path.basename(__filename);
@@ -28,61 +19,52 @@ function DivComponent({ children }: { children?: React.ReactNode }) {
   return <div>{children}</div>;
 }
 
-test('throw + restore console.assert', () => {
-  restoreConsoleAssert();
+test('throw + restore console method', () => {
+  const consoleMethodNames = ['assert', 'error', 'warn', 'info', 'log', 'dir', 'debug'] as const;
 
-  const original = console.assert;
-  expect(original).toEqual(console.assert);
+  consoleMethodNames.forEach(methodName => {
+    restoreConsole(methodName);
 
-  throwOnConsoleAssert();
-  expect(original).not.toEqual(console.assert);
+    const original = console[methodName];
+    expect(original).toEqual(console[methodName]);
 
-  restoreConsoleAssert();
-  expect(original).toEqual(console.assert);
+    throwOnConsole(methodName);
+    expect(original).not.toEqual(console[methodName]);
+
+    restoreConsole(methodName);
+    expect(original).toEqual(console[methodName]);
+  });
 });
 
-test('throw + restore console.error', () => {
-  restoreConsoleError();
+describe('throwOnConsole()', () => {
+  const consoleMethodNames = ['error', 'warn', 'info', 'log', 'dir', 'debug'] as const;
 
-  const original = console.error;
-  expect(original).toEqual(console.error);
+  consoleMethodNames.forEach(methodName => {
+    test(`console.${methodName} - throw`, () => {
+      throwOnConsole(methodName);
 
-  throwOnConsoleError();
-  expect(original).not.toEqual(console.error);
+      expect(() => console[methodName]('message')).toThrow('message');
 
-  restoreConsoleError();
-  expect(original).toEqual(console.error);
+      restoreConsole(methodName);
+    });
+
+    test(`console.${methodName} - ignore option`, () => {
+      throwOnConsole(methodName, { ignore: ['message'] });
+      expect(() => console[methodName]('message')).not.toThrow();
+
+      throwOnConsole(methodName, { ignore: [] });
+      expect(() => console[methodName]('message')).toThrow('message');
+    });
+
+    test(`console.${methodName} - fullStackTrace option`, () => {
+      // Check console.error test
+    });
+  });
 });
 
-test('throw + restore console.warn', () => {
-  restoreConsoleWarn();
-
-  const original = console.warn;
-  expect(original).toEqual(console.warn);
-
-  throwOnConsoleWarn();
-  expect(original).not.toEqual(console.warn);
-
-  restoreConsoleWarn();
-  expect(original).toEqual(console.warn);
-});
-
-test('throw + restore console.log', () => {
-  restoreConsoleLog();
-
-  const original = console.log;
-  expect(original).toEqual(console.log);
-
-  throwOnConsoleLog();
-  expect(original).not.toEqual(console.log);
-
-  restoreConsoleLog();
-  expect(original).toEqual(console.log);
-});
-
-describe('throwOnConsoleAssert()', () => {
+describe('console.assert', () => {
   test('condition', () => {
-    throwOnConsoleAssert();
+    throwOnConsole('assert');
 
     expect(() => console.assert(true, 'assert message')).not.toThrow();
     expect(() => assert(true, 'assert message')).not.toThrow();
@@ -90,29 +72,29 @@ describe('throwOnConsoleAssert()', () => {
     expect(() => console.assert(false, 'assert message')).toThrow('assert message');
     expect(() => assert(false, 'assert message')).toThrow('assert message');
 
-    restoreConsoleAssert();
+    restoreConsole('assert');
   });
 
   test('ignore option', () => {
-    throwOnConsoleAssert({ ignore: ['assert message'] });
+    throwOnConsole('assert', { ignore: ['assert message'] });
     expect(() => console.assert(false, 'assert message')).not.toThrow();
 
-    throwOnConsoleAssert({ ignore: [] });
+    throwOnConsole('assert', { ignore: [] });
     expect(() => console.assert(false, 'assert message')).toThrow('assert message');
   });
 
   test('fullStackTrace option', () => {
-    // Check throwOnConsoleError test
+    // Check console.error test
   });
 });
 
-describe('throwOnConsoleError()', () => {
+describe('console.error', () => {
   beforeAll(() => {
-    throwOnConsoleError();
+    throwOnConsole('error');
   });
 
   afterAll(() => {
-    restoreConsoleError();
+    restoreConsole('error');
   });
 
   test('An update inside a test was not wrapped in act(...)', () => {
@@ -351,13 +333,13 @@ describe('throwOnConsoleError()', () => {
     expect(() => render(<input value="John" />)).toThrow();
 
     // substring
-    throwOnConsoleError({
+    throwOnConsole('error', {
       ignore: ['You provided a `value` prop to a form field without an `onChange` handler']
     });
     expect(() => render(<input value="John" />)).not.toThrow();
 
     // regex
-    throwOnConsoleError({
+    throwOnConsole('error', {
       ignore: [
         /^Warning: You provided a `value` prop to a form field without an `onChange` handler/
       ]
@@ -375,7 +357,7 @@ describe('throwOnConsoleError()', () => {
       expect(e.stack).not.toContain('at throwError');
     }
 
-    throwOnConsoleError({ fullStackTrace: false });
+    throwOnConsole('error', { fullStackTrace: false });
     try {
       render(<input value="John" />);
     } catch (e) {
@@ -383,7 +365,7 @@ describe('throwOnConsoleError()', () => {
       expect(e.stack).not.toContain('at throwError');
     }
 
-    throwOnConsoleError({ fullStackTrace: true });
+    throwOnConsole('error', { fullStackTrace: true });
     try {
       render(<input value="John" />);
     } catch (e) {
@@ -398,7 +380,7 @@ describe('throwOnConsoleError()', () => {
       expect(e.stack).toContain('at throwError');
     }
 
-    throwOnConsoleError();
+    throwOnConsole('error');
     try {
       render(<input value="John" />);
     } catch (e) {
@@ -408,13 +390,13 @@ describe('throwOnConsoleError()', () => {
   });
 });
 
-describe('throwOnConsoleWarn()', () => {
+describe('console.warn', () => {
   beforeAll(() => {
-    throwOnConsoleWarn();
+    throwOnConsole('warn');
   });
 
   afterAll(() => {
-    restoreConsoleWarn();
+    restoreConsole('warn');
   });
 
   test('componentWillMount has been renamed, and is not recommended for use', () => {
@@ -472,7 +454,7 @@ describe('throwOnConsoleWarn()', () => {
       }
     }
 
-    throwOnConsoleWarn({ ignore: ['componentWillReceiveProps has been renamed'] });
+    throwOnConsole('warn', { ignore: ['componentWillReceiveProps has been renamed'] });
     expect(() => render(<MyComponent />)).not.toThrow();
 
     // React does not display this warning message if it has already been displayed
@@ -482,28 +464,6 @@ describe('throwOnConsoleWarn()', () => {
   });
 
   test('fullStackTrace option', () => {
-    // Check throwOnConsoleError test
-  });
-});
-
-describe('throwOnConsoleLog()', () => {
-  test('throw', () => {
-    throwOnConsoleLog();
-
-    expect(() => console.log('log message')).toThrow('log message');
-
-    restoreConsoleLog();
-  });
-
-  test('ignore option', () => {
-    throwOnConsoleLog({ ignore: ['log message'] });
-    expect(() => console.log('log message')).not.toThrow();
-
-    throwOnConsoleLog({ ignore: [] });
-    expect(() => console.log('log message')).toThrow('log message');
-  });
-
-  test('fullStackTrace option', () => {
-    // Check throwOnConsoleError test
+    // Check console.error test
   });
 });

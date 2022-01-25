@@ -16,7 +16,9 @@ type Options = {
   fullStackTrace?: boolean;
 };
 
-type ConsoleMethod = typeof console['assert' | 'error' | 'warn' | 'log'];
+type ConsoleMethodName = 'assert' | 'error' | 'warn' | 'info' | 'log' | 'dir' | 'debug';
+
+type ConsoleMethod = typeof console[ConsoleMethodName];
 
 function throwError(message: string, overriddenConsoleMethod: ConsoleMethod, options: Options) {
   const fullStackTrace = options.fullStackTrace ?? false;
@@ -49,8 +51,8 @@ function throwError(message: string, overriddenConsoleMethod: ConsoleMethod, opt
   throw e;
 }
 
-// Some code is duplicated between throwOnConsoleError() and throwOnConsoleWarn()
-// because we want to limit the impact on the stack trace displayed by Jest when using the `ignore` option:
+// This code is not inside throwError() because we want to limit the impact
+// on the stack trace displayed by Jest when using the `ignore` option:
 // one more line instead of two is better.
 // https://github.com/facebook/jest/blob/v27.4.7/packages/jest-console/src/BufferedConsole.ts#L39-L63
 function formatMessage(options: Options, ...data: any[]) {
@@ -65,94 +67,44 @@ function formatMessage(options: Options, ...data: any[]) {
   };
 }
 
-const originalConsoleAssert = console.assert;
+const originalConsole = {
+  assert: console.assert,
+  error: console.error,
+  warn: console.warn,
+  info: console.info,
+  log: console.log,
+  dir: console.dir,
+  debug: console.debug
+};
 
 /**
- * Makes console.assert to throw if called.
+ * Makes console method to throw if called.
  */
-export function throwOnConsoleAssert(options: Options = {}) {
-  console.assert = (condition?: boolean, ...data: any[]) => {
-    if (!condition) {
-      const { shouldNotThrow, message } = formatMessage(options, ...data);
-      if (!shouldNotThrow) {
-        throwError(message, console.assert, options);
+export function throwOnConsole(methodName: ConsoleMethodName, options: Options = {}) {
+  if (methodName === 'assert') {
+    console.assert = (condition?: boolean, ...data: any[]) => {
+      if (!condition) {
+        const { shouldNotThrow, message } = formatMessage(options, ...data);
+        if (!shouldNotThrow) {
+          throwError(message, console.assert, options);
+        }
       }
-    }
-  };
+    };
+  } else {
+    console[methodName] = (...data: any[]) => {
+      const { shouldNotThrow, message } = formatMessage(options, ...data);
+      if (shouldNotThrow) {
+        originalConsole[methodName](...data);
+      } else {
+        throwError(message, console[methodName], options);
+      }
+    };
+  }
 }
 
 /**
- * Restores the original console.assert implementation.
+ * Restores the original console method implementation.
  */
-export function restoreConsoleAssert() {
-  console.assert = originalConsoleAssert;
-}
-
-const originalConsoleError = console.error;
-
-/**
- * Makes console.error to throw if called.
- */
-export function throwOnConsoleError(options: Options = {}) {
-  console.error = (...data: any[]) => {
-    const { shouldNotThrow, message } = formatMessage(options, ...data);
-    if (shouldNotThrow) {
-      originalConsoleError(message);
-    } else {
-      throwError(message, console.error, options);
-    }
-  };
-}
-
-/**
- * Restores the original console.error implementation.
- */
-export function restoreConsoleError() {
-  console.error = originalConsoleError;
-}
-
-const originalConsoleWarn = console.warn;
-
-/**
- * Makes console.warn to throw if called.
- */
-export function throwOnConsoleWarn(options: Options = {}) {
-  console.warn = (...data: any[]) => {
-    const { shouldNotThrow, message } = formatMessage(options, ...data);
-    if (shouldNotThrow) {
-      originalConsoleWarn(message);
-    } else {
-      throwError(message, console.warn, options);
-    }
-  };
-}
-
-/**
- * Restores the original console.error implementation.
- */
-export function restoreConsoleWarn() {
-  console.warn = originalConsoleWarn;
-}
-
-const originalConsoleLog = console.log;
-
-/**
- * Makes console.log to throw if called.
- */
-export function throwOnConsoleLog(options: Options = {}) {
-  console.log = (...data: any[]) => {
-    const { shouldNotThrow, message } = formatMessage(options, ...data);
-    if (shouldNotThrow) {
-      originalConsoleLog(message);
-    } else {
-      throwError(message, console.log, options);
-    }
-  };
-}
-
-/**
- * Restores the original console.log implementation.
- */
-export function restoreConsoleLog() {
-  console.log = originalConsoleLog;
+export function restoreConsole(methodName: ConsoleMethodName) {
+  console[methodName] = originalConsole[methodName];
 }
