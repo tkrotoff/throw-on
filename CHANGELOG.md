@@ -1,3 +1,10 @@
+## Next
+
+- Breaking change: pass the method name as a parameter
+  - Example: throwOnConsoleError(...) becomes throwOnConsole('error', ...)
+- Support for console.info, console.log, console.dir, console.debug
+- Support for web browsers
+
 ## 0.5.0 (2022/01/19)
 
 - Remove bin/jest_throw-on hack: half works :-/
