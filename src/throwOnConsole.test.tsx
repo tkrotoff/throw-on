@@ -407,6 +407,29 @@ describe('throwOnConsoleWarn()', () => {
     expect(() => render(<MyComponent />)).not.toThrow();
   });
 
+  test('componentWillUpdate has been renamed, and is not recommended for use', () => {
+    class MyComponent extends Component {
+      componentWillUpdate() {}
+
+      render() {
+        return <DivComponent />;
+      }
+    }
+
+    expect(() => render(<MyComponent />)).toThrow(
+      new RegExp(
+        '^Warning: componentWillUpdate has been renamed, and is not recommended for use.*' +
+          'Please update the following components: MyComponent$',
+        's'
+      )
+    );
+
+    // React does not display this warning message if it has already been displayed
+    // Subsequent calls after a throw won't throw because of
+    // https://github.com/facebook/react/blob/v17.0.2/packages/react-reconciler/src/ReactStrictModeWarnings.old.js#L68-L70
+    expect(() => render(<MyComponent />)).not.toThrow();
+  });
+
   test('ignore option', () => {
     class MyComponent extends Component {
       componentWillReceiveProps() {}
