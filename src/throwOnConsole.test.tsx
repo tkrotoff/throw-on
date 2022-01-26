@@ -9,13 +9,14 @@ import { Component, createContext, useContext, useState } from 'react';
 import { restoreConsole, throwOnConsole } from './throwOnConsole';
 import { wait } from './wait';
 
-const space = '\u200B';
+const zeroWidthSpace = '\u200B';
+const space = ' ';
 
 function space_at_Component_filename_lineNumber_space(
   componentName: string,
   filename = path.basename(__filename)
 ) {
-  return `${space}    at ${componentName} \\(.*${filename}:\\d+:\\d+\\)${space}`;
+  return `${zeroWidthSpace}    at ${componentName} \\(.*${filename}:\\d+:\\d+\\)${space}${zeroWidthSpace}`;
 }
 
 function DivComponent({ children }: { children?: React.ReactNode }) {
@@ -124,7 +125,7 @@ describe('console.error', () => {
           '.*\n\n' +
           "This ensures that you're testing the behavior the user would see in the browser.*\n" +
           `${space_at_Component_filename_lineNumber_space('TestComponent', '.*')}\n` +
-          `${space}    at Suspense${space}\n` +
+          `${zeroWidthSpace}    at Suspense${space}${zeroWidthSpace}\n` +
           `${space_at_Component_filename_lineNumber_space('ErrorBoundary', '.*')}$`,
         's'
       )
@@ -157,7 +158,7 @@ describe('console.error', () => {
     ).toThrow(
       new RegExp(
         '^Warning: Encountered two children with the same key, `0`.*\n' +
-          `${space}    at div${space}\n` +
+          `${zeroWidthSpace}    at div${space}${zeroWidthSpace}\n` +
           `${space_at_Component_filename_lineNumber_space(DivComponent.name)}$`,
         's'
       )
@@ -212,7 +213,7 @@ describe('console.error', () => {
         '^Warning: React does not recognize the `unknownProp` prop on a DOM element.' +
           ' If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `unknownprop` instead.' +
           ' If you accidentally passed it from a parent component, remove it from the DOM element.\n' +
-          `${space}    at div${space}$`,
+          `${zeroWidthSpace}    at div${space}${zeroWidthSpace}$`,
         's'
       )
     );
@@ -229,7 +230,7 @@ describe('console.error', () => {
     // @ts-ignore
     expect(() => render(<div class="invalid" />)).toThrow(
       'Warning: Invalid DOM property `class`. Did you mean `className`?\n' +
-        `${space}    at div${space}`
+        `${zeroWidthSpace}    at div${space}${zeroWidthSpace}`
     );
 
     // React does not display this warning message if it has already been displayed
@@ -322,7 +323,7 @@ describe('console.error', () => {
     expect(() => render(<input value="John" />)).toThrow(
       new RegExp(
         '^Warning: You provided a `value` prop to a form field without an `onChange` handler.*\n' +
-          `${space}    at input${space}$`,
+          `${zeroWidthSpace}    at input${space}${zeroWidthSpace}$`,
         's'
       )
     );
@@ -335,7 +336,7 @@ describe('console.error', () => {
     // @ts-ignore
     expect(() => render(<div style={{ 'background-color': 'black' }} />)).toThrow(
       'Warning: Unsupported style property background-color. Did you mean backgroundColor?\n' +
-        `${space}    at div${space}`
+        `${zeroWidthSpace}    at div${space}${zeroWidthSpace}`
     );
 
     // React does not display this warning message if it has already been displayed
