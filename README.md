@@ -13,10 +13,12 @@ Force console.error and network requests to fail.
 - No dependencies
 - Fully tested
 - Written in TypeScript
+- Works with Node.js and browsers
+- Generic: not specific to React
 
 ## Why?
 
-Do you have warnings like _"An update inside a test was not wrapped in act"_ or _"Can't perform a React state update on an unmounted component"_ when running your React app tests?
+Do you have warnings like _"An update inside a test was not wrapped in act"_ or _"Can't perform a React state update on an unmounted component"_ when running your React app?
 
 Are your tests performing network requests when they shouldn't?
 
@@ -41,61 +43,82 @@ Result:
 
 ## Usage
 
+### For your tests
+
 `npm install --save-dev throw-on`
 
 ```TypeScript
-// Inside jest.setup.js for example
+// Inside jest.setup.js (Jest setupFilesAfterEnv option) for example
 import {
-  throwOnConsoleAssert,
-  throwOnConsoleError,
-  throwOnConsoleWarn,
+  throwOnConsole,
   throwOnFetch,
   throwOnXMLHttpRequestOpen
 } from 'throw-on';
 
-throwOnConsoleAssert();
-throwOnConsoleError();
-throwOnConsoleWarn();
+throwOnConsole('assert');
+throwOnConsole('error');
+throwOnConsole('warn');
 throwOnFetch();
 throwOnXMLHttpRequestOpen();
 ```
 
-Or copy-paste [throwOnConsole](src/throwOnConsole.ts) and/or [throwOnFetch](src/throwOnFetch.ts) and/or [throwOnXMLHttpRequestOpen](src/throwOnXMLHttpRequestOpen.ts) into your source code.
+## In the browser
+
+`npm install throw-on`
+
+```TypeScript
+// Inside your entry file (something like index.js or app.js)
+import { throwOnConsole } from 'throw-on';
+
+if (process.env.NODE_ENV !== 'production') { // You probably don't want this in production
+  throwOnConsole('assert');
+  throwOnConsole('error');
+  throwOnConsole('warn');
+  throwOnConsole('log');
+}
+```
+
+### Make it your own
+
+Copy-paste [throwOnConsole.ts](src/throwOnConsole.ts) and/or [throwOnFetch.ts](src/throwOnFetch.ts) and/or [throwOnXMLHttpRequestOpen.ts](src/throwOnXMLHttpRequestOpen.ts) into your source code.
+
+### Platform support
 
 Requires Node.js >= 15 or a [String.replaceAll](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replaceAll) [polyfill](https://github.com/zloirock/core-js#stringreplaceall).
+
+Transpilation to ES5 (via Babel for example) is needed for non-modern browsers.
 
 ## API
 
 ```TypeScript
-/**
- * Makes console.assert to throw if called.
- */
-function throwOnConsoleAssert(): void;
+type Options = {
+  /**
+   * Messages to ignore (won't throw), each message to ignore can be a substring or a regex.
+   *
+   * Empty list by default.
+   */
+  ignore?: (string | RegExp)[];
+
+  /**
+   * Displays the full stack trace including the 'throwError()' part if true; this helps for debugging.
+   * Works only under V8.
+   *
+   * False by default.
+   */
+  fullStackTrace?: boolean;
+};
+
+type ConsoleMethodName = 'assert' | 'error' | 'warn' | 'info' | 'log' | 'dir' | 'debug';
 
 /**
- * Restores the original console.assert implementation.
+ * Makes console method to throw if called.
  */
-function restoreConsoleAssert(): void;
+function throwOnConsole(methodName: ConsoleMethodName, options: Options = {}): void;
 
 /**
- * Makes console.error to throw if called.
+ * Restores the original console method implementation.
  */
-function throwOnConsoleError(options?: Options): void;
-
-/**
- * Restores the original console.error implementation.
- */
-function restoreConsoleError(): void;
-
-/**
- * Makes console.warn to throw if called.
- */
-function throwOnConsoleWarn(options?: Options): void;
-
-/**
- * Restores the original console.error implementation.
- */
-function restoreConsoleWarn(): void;
+function restoreConsole(methodName: ConsoleMethodName): void;
 
 /**
  * Makes fetch to throw if called.
@@ -116,22 +139,6 @@ function throwOnXMLHttpRequestOpen(): void;
  * Restores the original XMLHttpRequest.open implementation.
  */
 function restoreXMLHttpRequestOpen(): void;
-
-type Options = {
-  /**
-   * Messages to ignore (won't throw), each message to ignore can be a substring or a regex.
-   *
-   * Empty list by default.
-   */
-  ignore?: (string | RegExp)[];
-
-  /**
-   * Displays the full stack trace including the 'throwError()' part if true; this helps for debugging.
-   *
-   * False by default.
-   */
-  fullStackTrace?: boolean;
-};
 ```
 
 ### Limitations

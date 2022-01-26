@@ -22,7 +22,7 @@
     "clean:all": "rm -rf node_modules package-lock.json",
     "build": "npm run clean && npm run build:esnext && npm run build:cjs",
     "build:esnext": "tsc --project tsconfig.dist.json --declaration --outDir dist",
-    "build:cjs": "tsc --project tsconfig.dist.json --module commonjs --outDir dist/cjs",
+    "build:cjs": "tsc --project tsconfig.dist.json --module commonjs --removeComments --outDir dist/cjs",
     "format": "prettier --write '**/*'",
     "tsc": "tsc",
     "eslint": "eslint . '**/*.{js,jsx,ts,tsx}'",

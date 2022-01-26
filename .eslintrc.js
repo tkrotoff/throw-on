@@ -119,8 +119,6 @@ const config = {
     'unicorn/no-array-for-each': 'off',
     // FIXME Activate when ES modules are well supported
     'unicorn/prefer-module': 'off',
-    // FIXME Activate when ES modules are well supported
-    'unicorn/prefer-node-protocol': 'off',
 
     'jsx-a11y/label-has-associated-control': 'off',
 
