@@ -1,4 +1,4 @@
-## Next
+## 0.6.0 (2022/01/26)
 
 - Breaking change: pass the method name as a parameter
   - Example: throwOnConsoleError(...) becomes throwOnConsole('error', ...)

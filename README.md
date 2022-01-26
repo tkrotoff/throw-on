@@ -43,7 +43,7 @@ Result:
 
 ## Usage
 
-### For your tests
+### In your tests
 
 `npm install --save-dev throw-on`
 
@@ -62,7 +62,7 @@ throwOnFetch();
 throwOnXMLHttpRequestOpen();
 ```
 
-## In the browser
+### In the browser
 
 `npm install throw-on`
 
@@ -74,7 +74,6 @@ if (process.env.NODE_ENV !== 'production') { // You probably don't want this in 
   throwOnConsole('assert');
   throwOnConsole('error');
   throwOnConsole('warn');
-  throwOnConsole('log');
 }
 ```
 
@@ -141,7 +140,7 @@ function throwOnXMLHttpRequestOpen(): void;
 function restoreXMLHttpRequestOpen(): void;
 ```
 
-### Limitations
+## Limitations
 
 When using the `ignore` option, the stack trace displayed by Jest includes an extra line corresponding to throw-on source code.
 I did not find a solution, here is an attempt: https://github.com/tkrotoff/throw-on/pull/1
