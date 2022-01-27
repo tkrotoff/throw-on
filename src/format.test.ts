@@ -2,19 +2,22 @@ import { format as nodeFormat } from 'node:util';
 
 import { format } from './format';
 
-test('should not change input string', () => {
+test('should not change arguments', () => {
   const str = '%s';
+  const values = ['foo', 'bar'];
 
   {
-    const o = format(str, 'foo');
+    const o = format(str, ...values);
     expect(str).toEqual('%s');
-    expect(o).toEqual('foo');
+    expect(values).toEqual(['foo', 'bar']);
+    expect(o).toEqual('foo bar');
   }
 
   {
-    const o = nodeFormat(str, 'foo');
+    const o = nodeFormat(str, ...values);
     expect(str).toEqual('%s');
-    expect(o).toEqual('foo');
+    expect(values).toEqual(['foo', 'bar']);
+    expect(o).toEqual('foo bar');
   }
 });
 
@@ -25,14 +28,24 @@ test('no params', () => {
 });
 
 test('no values', () => {
-  const i = 'foo';
-  const o = format(i);
-  expect(o).toEqual('foo');
-  expect(o).toEqual(nodeFormat(i));
+  const str = '%s';
+  const o = format(str);
+  expect(o).toEqual('%s');
+  expect(o).toEqual(nodeFormat(str));
 });
 
-test('more % than values', () => {
-  // Unsupported
+test('no %', () => {
+  const i = ['foo', 'bar'];
+  const o = format(...i);
+  expect(o).toEqual('foo bar');
+  expect(o).toEqual(nodeFormat(...i));
+});
+
+test('more values than %', () => {
+  const i = ['%s', 'foo', 'bar', 'baz', '08', '11px', '3.14', '314e-2'];
+  const o = format(...i);
+  expect(o).toEqual('foo bar baz 08 11px 3.14 314e-2');
+  expect(o).toEqual(nodeFormat(...i));
 });
 
 test('1 %s', () => {
@@ -108,4 +121,13 @@ test('1 %s 1 %d', () => {
   const o = format(...i);
   expect(o).toEqual('foo 8');
   expect(o).toEqual(nodeFormat(...i));
+});
+
+test('examples from Node.js documentation', () => {
+  // https://nodejs.org/docs/latest-v16.x/api/util.html#utilformatformat-args
+
+  expect(format('%s:%s', 'foo')).toEqual('foo:%s');
+  expect(format('%s:%s', 'foo', 'bar', 'baz')).toEqual('foo:bar baz');
+  expect(nodeFormat(1, 2, 3)).toEqual('1 2 3');
+  expect(format('%% %s')).toEqual('%% %s');
 });

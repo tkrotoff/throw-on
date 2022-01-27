@@ -12,19 +12,36 @@
  * - %c: CSS. This specifier is ignored and will skip any CSS passed in.
  * - %%: single percent sign ('%'). This does not consume an argument.
  */
-export function format(str?: string, ...values: any[]) {
+export function format(str?: any, ...values: any[]) {
   if (str === undefined) return '';
 
   let o = str;
-
-  o = o.replaceAll('%c', '');
+  let nbSpecifiers = 0;
 
   values.forEach(value => {
-    if (o.includes('%s')) o = o.replace('%s', String(value));
-    else if (o.includes('%d')) o = o.replace('%d', Number(value).toString());
-    else if (o.includes('%i')) o = o.replace('%i', Number.parseInt(value, 10).toString());
-    else if (o.includes('%f')) o = o.replace('%f', Number.parseFloat(value).toString());
+    if (o.includes('%s')) {
+      o = o.replace('%s', String(value));
+      nbSpecifiers++;
+    } else if (o.includes('%d')) {
+      o = o.replace('%d', Number(value).toString());
+      nbSpecifiers++;
+    } else if (o.includes('%i')) {
+      o = o.replace('%i', Number.parseInt(value, 10).toString());
+      nbSpecifiers++;
+    } else if (o.includes('%f')) {
+      o = o.replace('%f', Number.parseFloat(value).toString());
+      nbSpecifiers++;
+    } else if (o.includes('%c')) {
+      o = o.replace('%c', '');
+      nbSpecifiers++;
+    }
   });
+
+  // > If there are more arguments passed to the util.format() method than the number of specifiers,
+  // > the extra arguments are concatenated to the returned string, separated by spaces
+  for (let i = nbSpecifiers; i < values.length; i++) {
+    o += ` ${values[i]}`;
+  }
 
   return o;
 }

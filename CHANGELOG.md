@@ -1,3 +1,7 @@
+## 0.6.2 (2022/01/27)
+
+- Fix format(), was not handling extra arguments 🤦
+
 ## 0.6.1 (2022/01/26)
 
 - Fix clickable link in Chrome
