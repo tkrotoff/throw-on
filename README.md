@@ -49,6 +49,7 @@ Result:
 
 ```TypeScript
 // Inside jest.setup.js (Jest setupFilesAfterEnv option) for example
+
 import {
   throwOnConsole,
   throwOnFetch,
@@ -68,13 +69,15 @@ throwOnXMLHttpRequestOpen();
 
 ```TypeScript
 // Inside your entry file (something like index.js or app.js)
-import { throwOnConsole } from 'throw-on';
 
 if (process.env.NODE_ENV !== 'production') { // You probably don't want this in production
+  const { throwOnConsole } = await import('throw-on');
   throwOnConsole('assert');
   throwOnConsole('error');
   throwOnConsole('warn');
 }
+
+render(<MyApp />, document.getElementById('app'));
 ```
 
 ### Make it your own
