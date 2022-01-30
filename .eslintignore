@@ -2,3 +2,5 @@ node_modules/
 
 dist/
 coverage/
+
+src/test-util-format.js
