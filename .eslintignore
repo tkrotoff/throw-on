@@ -4,3 +4,4 @@ dist/
 coverage/
 
 src/test-util-format.js
+src/test-util-inspect.js
