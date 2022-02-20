@@ -1,3 +1,9 @@
+## 0.6.3 (2022/02/20)
+
+- Fix: re-implement util.inspect() & util.format()
+
+  Use https://github.com/hildjj/node-inspect-extracted instead or is this enough?
+
 ## 0.6.2 (2022/01/27)
 
 - Fix format(), was not handling extra arguments 🤦
