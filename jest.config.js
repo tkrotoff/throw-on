@@ -1,5 +1,8 @@
 // @ts-check
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { defaults } = require('jest-config');
+
 /** @type import('@jest/types').Config.InitialOptions */
 const config = {
   testEnvironment: 'jsdom',
@@ -18,7 +21,13 @@ const config = {
       functions: 100,
       lines: 100
     }
-  }
+  },
+
+  coveragePathIgnorePatterns: [
+    ...defaults.coveragePathIgnorePatterns,
+    'test-util-format.js',
+    'test-util-inspect.js'
+  ]
 };
 
 module.exports = config;

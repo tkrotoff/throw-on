@@ -1,7 +1,11 @@
 {
   "extends": "./tsconfig",
   "compilerOptions": {
-    "noEmit": false
+    "noEmit": false,
+
+    // FIXME Bundlephobia does not support optional chaining (?.)
+    // https://github.com/pastelsky/bundlephobia/issues/413
+    "target": "es2019"
   },
   "include": ["src/index.ts"]
 }

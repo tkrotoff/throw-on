@@ -45,6 +45,7 @@ const config = {
     // https://stackoverflow.com/a/50346856
     'no-param-reassign': 'off',
     camelcase: 'off',
+    'no-restricted-syntax': 'off',
 
     'import/no-extraneous-dependencies': 'off',
     'import/no-unresolved': 'off',
