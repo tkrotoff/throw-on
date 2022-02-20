@@ -1,6 +1,6 @@
 {
   "name": "throw-on",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "Throw on console.error() & fetch",
   "repository": "github:tkrotoff/throw-on",
   "license": "MIT",
