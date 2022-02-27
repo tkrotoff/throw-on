@@ -1,6 +1,7 @@
 /* eslint-disable unicorn/prefer-number-properties, func-names, @typescript-eslint/no-empty-function, new-cap, no-new-func,
 no-new-object, no-new-wrappers, unicorn/new-for-builtins, no-regex-spaces, unicorn/error-message, no-inner-declarations */
 
+import assert from 'node:assert';
 import { inspect as nodeInspect } from 'node:util';
 
 import { inspect } from './inspect';
@@ -830,8 +831,16 @@ jest.doMock('util', () => {
   return { ...jest.requireActual('node:util'), inspect };
 });
 
+function getNodeMajorVersion() {
+  const match = process.version.match(/^v(\d{1,2})\..*$/);
+  assert(match !== null);
+  return parseInt(match[1], 10);
+}
+
 // https://github.com/nodejs/node/blob/v17.4.0/test/parallel/test-util-inspect.js
 test('test-util-inspect.js', async () => {
-  // @ts-ignore
-  await import('./test-util-inspect');
+  if (getNodeMajorVersion() >= 16) {
+    // @ts-ignore
+    await import('./test-util-inspect');
+  }
 });
