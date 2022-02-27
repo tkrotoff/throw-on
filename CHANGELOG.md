@@ -1,3 +1,7 @@
+## 0.6.4 (2022/02/27)
+
+- Fix documentation: Node.js 14 supported
+
 ## 0.6.3 (2022/02/20)
 
 - Fix: re-implement util.inspect() & util.format()
