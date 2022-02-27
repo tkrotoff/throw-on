@@ -733,19 +733,12 @@ test('Circular', () => {
     expectInspectFail(map, 'Map(1) { [Circular] }', "<ref *1> Map(1) { [Circular *1] => 'map' }");
   }
 
-  // {
-  //   const obj = {};
-  //   obj.a = [obj];
-  //   obj.b = {};
-  //   obj.b.inner = obj.b;
-  //   obj.b.obj = obj;
-
-  //   expectInspectFail(
-  //     obj,
-  //     '{ a: [Circular], b: [Circular] }',
-  //     '<ref *1> { a: [ [Circular *1] ], b: <ref *2> { inner: [Circular *2], obj: [Circular *1] } }'
-  //   );
-  // }
+  {
+    const obj2 = {};
+    // @ts-ignore
+    obj2.obj2 = [obj2];
+    expectInspectFail(obj2, '{ obj2: [Circular] }', '<ref *1> { obj2: [ [Circular *1] ] }');
+  }
 });
 
 // Taken and adapted from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#examples
