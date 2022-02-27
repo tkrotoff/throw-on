@@ -86,7 +86,7 @@ Copy-paste [throwOnConsole.ts](src/throwOnConsole.ts) and/or [throwOnFetch.ts](s
 
 ### Platform support
 
-Requires Node.js >= 15 or a [String.replaceAll](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replaceAll) [polyfill](https://github.com/zloirock/core-js#stringreplaceall).
+Tested with Node.js >= 14, might work with Node.js 12.
 
 Transpilation to ES5 (via Babel for example) is needed for non-modern browsers.
 
