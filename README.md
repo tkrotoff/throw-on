@@ -147,3 +147,6 @@ function restoreXMLHttpRequestOpen(): void;
 
 When using the `ignore` option, the stack trace displayed by Jest includes an extra line corresponding to throw-on source code.
 I did not find a solution, here is an attempt: https://github.com/tkrotoff/throw-on/pull/1
+
+Libraries that console.\* exceptions <sup>[1](https://github.com/expressjs/express/blob/4.17.3/lib/application.js#L630)</sup> <sup>[2](https://github.com/expressjs/api-error-handler/blob/1.0.0/index.js#L22)</sup> introduce an infinite loop:
+throw-on intercepts the console.\* call and throws an exception => the library catches the exception and console.\* it, ect.

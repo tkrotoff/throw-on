@@ -1,3 +1,7 @@
+## 0.6.5 (2022/03/03)
+
+- Warn against possible infinite loop
+
 ## 0.6.4 (2022/02/27)
 
 - Fix documentation: Node.js 14 supported
