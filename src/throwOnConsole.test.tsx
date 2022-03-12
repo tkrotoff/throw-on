@@ -67,7 +67,7 @@ describe('throwOnConsole()', () => {
 });
 
 describe('console.assert', () => {
-  test('condition', () => {
+  test('condition with message', () => {
     throwOnConsole('assert');
 
     expect(() => console.assert(true, 'assert message')).not.toThrow();
@@ -75,6 +75,45 @@ describe('console.assert', () => {
 
     expect(() => console.assert(false, 'assert message')).toThrow('assert message');
     expect(() => assert(false, 'assert message')).toThrow('assert message');
+
+    restoreConsole('assert');
+  });
+
+  test('condition without message', () => {
+    throwOnConsole('assert');
+
+    expect(() => console.assert(true)).not.toThrow();
+    expect(() => assert(true)).not.toThrow();
+
+    // https://nodejs.org/docs/latest-v16.x/api/assert.html#assertokvalue-message
+
+    expect(() => console.assert(1)).not.toThrow();
+    expect(() => assert(1)).not.toThrow();
+
+    expect(() => console.assert(typeof 123 === 'string')).toThrow('');
+    expect(() => assert(typeof 123 === 'string')).toThrow('false == true');
+
+    expect(() => console.assert(false)).toThrow('');
+    // Wow that's messed up: the exception message matches a previous statement
+    expect(() => assert(false)).toThrow(
+      'The expression evaluated to a falsy value:\n\n  expect(() => assert(1)).not.toThrow()\n'
+    );
+
+    expect(() => console.assert(0)).toThrow('');
+    // Wow that's messed up: the exception message matches a previous statement
+    expect(() => assert(0)).toThrow(
+      "The expression evaluated to a falsy value:\n\n  assert(typeof 123 === 'string')\n"
+    );
+
+    restoreConsole('assert');
+  });
+
+  test('no args', () => {
+    throwOnConsole('assert');
+
+    expect(() => console.assert()).toThrow('');
+    // @ts-ignore
+    expect(() => assert()).toThrow('No value argument passed to `assert.ok()`');
 
     restoreConsole('assert');
   });
