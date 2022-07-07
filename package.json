@@ -20,9 +20,10 @@
   "scripts": {
     "clean": "rm -rf dist coverage",
     "clean:all": "rm -rf node_modules package-lock.json",
-    "build": "npm run clean && npm run build:esnext && npm run build:cjs",
-    "build:esnext": "tsc --project tsconfig.dist.json --declaration --outDir dist",
-    "build:cjs": "tsc --project tsconfig.dist.json --module commonjs --removeComments --outDir dist/cjs",
+    "build": "npm run clean && npm run build:dts && npm run build:esm && npm run build:cjs",
+    "build:dts": "tsc --project tsconfig.dist.json --declaration --emitDeclarationOnly --outDir dist",
+    "build:esm": "tsc --project tsconfig.dist.json --removeComments --outDir dist",
+    "build:cjs": "tsc --project tsconfig.dist.json --removeComments --module commonjs --outDir dist/cjs",
     "format": "prettier --write '**/*'",
     "tsc": "tsc",
     "eslint": "eslint . '**/*.{js,jsx,ts,tsx}'",
