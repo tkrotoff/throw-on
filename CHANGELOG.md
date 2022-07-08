@@ -1,3 +1,9 @@
+## 0.6.6 (2022/07/08)
+
+- Remove comments from ESM build
+- Test with Node.js 18
+- Update some npm packages
+
 ## 0.6.5 (2022/03/03)
 
 - Warn against possible infinite loop
