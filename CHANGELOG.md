@@ -1,3 +1,7 @@
+## 0.7.0 (2022/11/15)
+
+- Breaking change: always display the original console message before throwing
+
 ## 0.6.6 (2022/07/08)
 
 - Remove comments from ESM build
