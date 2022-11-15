@@ -37,7 +37,7 @@ type Key = string | symbol;
 
 function strKey(key: Key, recurseTimes: number) {
   switch (typeof key) {
-    case 'string':
+    case 'string': {
       // Because Object.keys() return (string | symbol)[] thus
       // const arr = []; arr[10] = 11;
       // returns 10 as a string instead of number
@@ -46,13 +46,16 @@ function strKey(key: Key, recurseTimes: number) {
         return strValue(key, recurseTimes);
       }
       return key.includes(' ') ? strValue(key, recurseTimes) : key;
+    }
 
-    case 'symbol':
+    case 'symbol': {
       return `[${strValue(key, recurseTimes)}]`;
+    }
 
     // istanbul ignore next
-    default:
+    default: {
       throw new Error(`Unknown type of key '${typeof key}'`);
+    }
   }
 }
 
@@ -180,30 +183,35 @@ function str(key: string | number | symbol, holder: any, recurseTimes: number): 
   let res = '';
 
   switch (typeof value) {
-    case 'string':
+    case 'string': {
       res = quote(value);
       break;
+    }
 
     case 'undefined':
     case 'number':
-    case 'boolean':
+    case 'boolean': {
       res = `${value}`;
       break;
+    }
 
-    case 'bigint':
+    case 'bigint': {
       res = `${value}n`;
       break;
+    }
 
-    case 'symbol':
+    case 'symbol': {
       res = value.toString();
       break;
+    }
 
-    case 'function':
+    case 'function': {
       //showEmptyBraces = true;
       res = `[${value.constructor !== undefined ? value.constructor.name : 'Unknown'}${
         value.name !== '' ? `: ${value.name}` : ' (anonymous)'
       }]`;
       break;
+    }
 
     case 'object': {
       // typeof null is "object" :-/
@@ -256,8 +264,9 @@ function str(key: string | number | symbol, holder: any, recurseTimes: number): 
     }
 
     // istanbul ignore next
-    default:
+    default: {
       throw new Error(`Unknown type of value '${typeof value}'`);
+    }
   }
 
   const partial: string[] = [];

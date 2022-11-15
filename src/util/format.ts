@@ -34,54 +34,65 @@ export function format(str?: any, ...values: any[]) {
       const value = values[nbSpecifiers];
 
       switch (match) {
-        case '%s':
+        case '%s': {
           nbSpecifiers++;
           switch (typeof value) {
-            case 'bigint':
+            case 'bigint': {
               return `${value}n`;
-            case 'object':
+            }
+            case 'object': {
               return value !== null && typeof value.toString === 'function'
                 ? value.toString()
                 : inspect(value);
-            default:
+            }
+            default: {
               return String(value);
+            }
           }
+        }
 
-        case '%d':
+        case '%d': {
           nbSpecifiers++;
           switch (typeof value) {
-            case 'bigint':
+            case 'bigint': {
               return `${value}n`;
-            default:
+            }
+            default: {
               try {
                 return Number(value).toString();
               } catch {
                 return Number.NaN.toString();
               }
+            }
           }
+        }
 
-        case '%i':
+        case '%i': {
           nbSpecifiers++;
           switch (typeof value) {
-            case 'bigint':
+            case 'bigint': {
               return `${value}n`;
-            default:
+            }
+            default: {
               try {
                 return Number.parseInt(value, 10).toString();
               } catch {
                 return Number.NaN.toString();
               }
+            }
           }
+        }
 
-        case '%f':
+        case '%f': {
           nbSpecifiers++;
           try {
             return Number.parseFloat(value).toString();
           } catch {
             return Number.NaN.toString();
           }
+        }
 
-        case '%j':
+        case '%j': {
           nbSpecifiers++;
           try {
             return JSON.stringify(value);
@@ -91,19 +102,23 @@ export function format(str?: any, ...values: any[]) {
             }
             throw e;
           }
+        }
 
         case '%o':
-        case '%O':
+        case '%O': {
           nbSpecifiers++;
           return inspect(value);
+        }
 
-        case '%c':
+        case '%c': {
           nbSpecifiers++;
           return '';
+        }
 
         // istanbul ignore next
-        default:
+        default: {
           throw new Error(`Unknown match '${match}'`);
+        }
       }
     });
 
