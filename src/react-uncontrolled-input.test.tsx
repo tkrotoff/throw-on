@@ -1,8 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { useState } from 'react';
 
-// Moved to a separate file, works solo but messes with the other tests (React 17.0.2) when inside throwOnConsole.test.tsx
-
 // FIXME This is fucked up in React 18.2.0
 //
 // Output generated:
