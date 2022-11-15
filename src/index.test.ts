@@ -2,6 +2,8 @@ import * as throwOn from './index';
 
 test('functions are exported', () => {
   expect(throwOn).toEqual({
+    ThrowOnError: expect.any(Function),
+
     throwOnConsole: expect.any(Function),
     restoreConsole: expect.any(Function),
 
