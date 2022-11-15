@@ -18,4 +18,8 @@ test('An update inside a test was not wrapped in act(...)', () => {
   expect(() => increment()).toThrow(
     'Warning: An update to TestComponent inside a test was not wrapped in act(...).'
   );
+
+  expect(() => increment()).toThrow(
+    'Warning: An update to TestComponent inside a test was not wrapped in act(...).'
+  );
 });
