@@ -14,7 +14,9 @@ Force console.error/warn and network requests to fail.
 - Fully tested
 - Written in TypeScript
 - Works with Node.js and browsers
-- Generic: not specific to React
+- Generic: not specific to React or Jest
+
+This is an alternative to https://github.com/ValentinH/jest-fail-on-console
 
 ## Why?
 
@@ -23,7 +25,7 @@ Do you have warnings like _"An update inside a test was not wrapped in act"_ or 
 Solution: throw whenever there is a warning (e.g. console.error/warn) or a network request that isn't mocked
 
 - The sooner a test fails, the easier it is to fix
-- Improve code quality
+- Improve code quality (like an ESLint rule but at run/test time)
 
 throw-on still displays the original console message before throwing an exception with the message `throw-on console.[METHOD]: [ORIGINAL_MESSAGE_SHORTEN]`
 
@@ -129,6 +131,23 @@ function throwOnXMLHttpRequestOpen(): void;
  * Restores the original XMLHttpRequest.open implementation.
  */
 function restoreXMLHttpRequestOpen(): void;
+```
+
+## What about valid console messages?
+
+If a `console.error()` is expected, then you should assert for it:
+
+```TypeScript
+test('should log an error', () => {
+  const spy = jest.spyOn(console, 'error').mockImplementation();
+
+  // ...
+
+  expect(spy).toHaveBeenCalledTimes(1);
+  expect(spy).toHaveBeenCalledWith('your error message');
+
+  spy.mockRestore();
+});
 ```
 
 ## Limitations

@@ -1,3 +1,4 @@
+// Instead of 'node:util' because it doesn't work in the browser
 import { format } from './util';
 
 type Options = {
