@@ -73,68 +73,7 @@ describe('throwOnConsole()', () => {
 });
 
 describe('console.assert', () => {
-  test('condition with message', () => {
-    throwOnConsole('assert');
-
-    expect(() => console.assert(true, 'assert message')).not.toThrow();
-    expect(() => assert(true, 'assert message')).not.toThrow();
-
-    expect(() => console.assert(false, 'assert message')).toThrow('assert message');
-    expect(() => assert(false, 'assert message')).toThrow('assert message');
-
-    restoreConsole('assert');
-  });
-
-  test('condition without message', () => {
-    throwOnConsole('assert');
-
-    expect(() => console.assert(true)).not.toThrow();
-    expect(() => assert(true)).not.toThrow();
-
-    // https://nodejs.org/docs/latest-v16.x/api/assert.html#assertokvalue-message
-
-    expect(() => console.assert(1)).not.toThrow();
-    expect(() => assert(1)).not.toThrow();
-
-    expect(() => console.assert(typeof 123 === 'string')).toThrow('throw-on console.assert: ');
-    expect(() => assert(typeof 123 === 'string')).toThrow(
-      'The expression evaluated to a falsy value:\n\n  expect(() => assert(true)).not.toThrow()\n'
-    );
-
-    expect(() => console.assert(false)).toThrow('throw-on console.assert: ');
-    // Wow that's messed up: the exception message matches a previous statement
-    expect(() => assert(false)).toThrow(
-      'The expression evaluated to a falsy value:\n\n  expect(() => console.assert(1)).not.toThrow()\n'
-    );
-
-    expect(() => console.assert(0)).toThrow('throw-on console.assert: ');
-    // Wow that's messed up: the exception message matches a previous statement
-    expect(() => assert(0)).toThrow(
-      "The expression evaluated to a falsy value:\n\n  console.assert(typeof 123 === 'string')\n"
-    );
-
-    restoreConsole('assert');
-  });
-
-  test('no args', () => {
-    throwOnConsole('assert');
-
-    expect(() => console.assert()).toThrow('throw-on console.assert: ');
-    // @ts-ignore
-    expect(() => assert()).toThrow('No value argument passed to `assert.ok()`');
-
-    restoreConsole('assert');
-  });
-
-  test('ignore option', () => {
-    throwOnConsole('assert', { ignore: ['assert message'] });
-    expect(() => console.assert(false, 'assert message')).not.toThrow();
-    restoreConsole('assert');
-
-    throwOnConsole('assert', { ignore: [] });
-    expect(() => console.assert(false, 'assert message')).toThrow('assert message');
-    restoreConsole('assert');
-  });
+  // See console-assert.test.ts
 });
 
 describe('console.error', () => {
@@ -165,7 +104,6 @@ describe('console.error', () => {
     );
   });
 
-  // skip?
   test('Each child in a list should have a unique "key" prop.', () => {
     expect(() =>
       render(<DivComponent>{[<DivComponent />, <DivComponent />]}</DivComponent>)
@@ -201,7 +139,6 @@ describe('console.error', () => {
         // React does not display this warning message if it has already been displayed
         // Subsequent calls after a throw won't throw because of
         // https://github.com/facebook/react/blob/v17.0.2/packages/react-reconciler/src/ReactFiberWorkLoop.old.js#L3025
-        // @ts-ignore
         expect(() => setState('Update state')).toThrow(
           "throw-on console.error: Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix, cancel all subscriptions and asynchronous tasks in a useEffect cleanup function."
         );
@@ -267,7 +204,7 @@ describe('console.error', () => {
 
     // React does not display this warning message if it has already been displayed
     // Subsequent calls after a throw won't throw because of
-    // https://github.com/facebook/react/blob/v17.0.2/packages/react-reconciler/src/ReactFiberWorkLoop.old.js#L3210-L3211    // @ts-ignore
+    // https://github.com/facebook/react/blob/v17.0.2/packages/react-reconciler/src/ReactFiberWorkLoop.old.js#L3210-L3211
     expect(() => render(<Parent />)).not.toThrow();
   });
 
@@ -292,26 +229,6 @@ describe('console.error', () => {
 
     expect(() => rerender(<MyComponent />)).toThrow(
       'throw-on console.error: Warning: React has detected a change in the order of Hooks called by MyComponent. This will lead to bugs and errors if not fixed. For more information, read the Rules of Hooks: https://reactjs.org/link/rules-of-hooks'
-    );
-  });
-
-  test('A component is changing an uncontrolled input to be controlled', () => {
-    function MyComponent() {
-      const [name, setName] = useState<string | undefined>();
-      return (
-        <label>
-          Name
-          <input value={name} onChange={({ target }) => setName(target.value)} />
-        </label>
-      );
-    }
-
-    render(<MyComponent />);
-
-    const input = screen.getByLabelText<HTMLInputElement>('Name');
-
-    expect(() => fireEvent.change(input, { target: { value: 'John' } })).toThrow(
-      'throw-on console.error: Warning: A component is changing an uncontrolled input to be controlled. This is likely caused by the value changing from undefined to a defined value, which should not happen. Decide between using a controlled or uncontrolled input element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components'
     );
   });
 
