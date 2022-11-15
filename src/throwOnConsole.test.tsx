@@ -1,12 +1,10 @@
 /* eslint-disable react/no-unknown-property, react/no-deprecated, @typescript-eslint/no-empty-function */
 
-import { act, fireEvent, render, screen } from '@testing-library/react';
-import { renderHook } from '@testing-library/react-hooks';
+import { render, renderHook } from '@testing-library/react';
 import assert from 'node:assert';
 import { Component, createContext, useContext, useState } from 'react';
 
 import { restoreConsole, throwOnConsole, ThrowOnError } from './throwOnConsole';
-import { wait } from './wait';
 
 function DivComponent({ children }: { children?: React.ReactNode }) {
   return <div>{children}</div>;
@@ -125,42 +123,6 @@ describe('console.error', () => {
     ).toThrow(
       'throw-on console.error: Warning: Encountered two children with the same key, `0`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.'
     );
-  });
-
-  test("Can't perform a React state update on an unmounted component", async () => {
-    expect.assertions(1);
-
-    function MyComponent() {
-      const [, setState] = useState('Initial state');
-
-      async function handleClick() {
-        await wait(10);
-
-        // React does not display this warning message if it has already been displayed
-        // Subsequent calls after a throw won't throw because of
-        // https://github.com/facebook/react/blob/v17.0.2/packages/react-reconciler/src/ReactFiberWorkLoop.old.js#L3025
-        expect(() => setState('Update state')).toThrow(
-          "throw-on console.error: Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix, cancel all subscriptions and asynchronous tasks in a useEffect cleanup function."
-        );
-      }
-
-      return (
-        <button type="button" onClick={handleClick}>
-          button
-        </button>
-      );
-    }
-
-    const { unmount } = render(<MyComponent />);
-
-    const button = screen.getByText<HTMLButtonElement>('button');
-
-    fireEvent.click(button);
-
-    unmount();
-
-    // eslint-disable-next-line testing-library/no-unnecessary-act
-    await act(() => wait(10 + 10));
   });
 
   test('React does not recognize the prop on a DOM element', () => {
