@@ -7,7 +7,7 @@
 [![Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![Airbnb Code Style](https://badgen.net/badge/code%20style/airbnb/ff5a5f?icon=airbnb)](https://github.com/airbnb/javascript)
 
-Force console.error and network requests to fail.
+Force console.error/warn and network requests to fail.
 
 - Tiny: less than 100 lines of code
 - No dependencies
@@ -18,14 +18,14 @@ Force console.error and network requests to fail.
 
 ## Why?
 
-Do you have warnings like _"An update inside a test was not wrapped in act"_ or _"Can't perform a React state update on an unmounted component"_ when running your React app?
+Do you have warnings like _"An update inside a test was not wrapped in act"_ or _"Can't perform a React state update on an unmounted component"_ when running or testing your React app? Are your tests performing network requests when they shouldn't?
 
-Are your tests performing network requests when they shouldn't?
+Solution: throw whenever there is a warning (e.g. console.error/warn) or a network request that isn't mocked
 
-Solution: throw whenever there is a React warning (e.g. console.error) or a network request that isn't mocked.
+- The sooner a test fails, the easier it is to fix
+- Improve code quality
 
-- The sooner a test fails, the easier it is to fix it
-- Improve the quality of your code (like an ESLint rule but at runtime)
+throw-on still displays the original console message before throwing an exception with the message `throw-on console.[METHOD]: [ORIGINAL_MESSAGE_SHORTEN]`
 
 Result:
 
@@ -33,13 +33,9 @@ Result:
 
   ![before](doc/was-not-wrapped-in-act-original.png)
 
-  ![before](doc/state-update-on-unmounted-component-original.png)
-
 - after (test fails)
 
   ![after](doc/was-not-wrapped-in-act-throwOnConsoleError.png)
-
-  ![after](doc/state-update-on-unmounted-component-throwOnConsoleError.png)
 
 ## Usage
 
@@ -68,7 +64,7 @@ throwOnXMLHttpRequestOpen();
 `npm install throw-on`
 
 ```TypeScript
-// Inside your entry file (something like index.js or app.js)
+// Inside your entry file (something like index.js, app.js, pages/_app.js)
 
 if (process.env.NODE_ENV !== 'production') { // You probably don't want this in production
   const { throwOnConsole } = await import('throw-on');
@@ -100,14 +96,6 @@ type Options = {
    * Empty list by default.
    */
   ignore?: (string | RegExp)[];
-
-  /**
-   * Displays the full stack trace including the 'throwError()' part if true; this helps for debugging.
-   * Works only under V8.
-   *
-   * False by default.
-   */
-  fullStackTrace?: boolean;
 };
 
 type ConsoleMethodName = 'assert' | 'error' | 'warn' | 'info' | 'log' | 'dir' | 'debug';
@@ -145,8 +133,19 @@ function restoreXMLHttpRequestOpen(): void;
 
 ## Limitations
 
-When using the `ignore` option, the stack trace displayed by Jest includes an extra line corresponding to throw-on source code.
-I did not find a solution, here is an attempt: https://github.com/tkrotoff/throw-on/pull/1
+- Be careful: it adds a line to Jest stack trace, messing up the [codeframe](https://github.com/facebook/jest/issues/8819):
 
-Libraries that console.\* exceptions <sup>[1](https://github.com/expressjs/express/blob/4.17.3/lib/application.js#L630)</sup> <sup>[2](https://github.com/expressjs/api-error-handler/blob/1.0.0/index.js#L22)</sup> introduce an infinite loop:
-throw-on intercepts the console.\* call and throws an exception => the library catches the exception and console.\* it, ect.
+  ```
+  at console.<computed> (src/throwOnConsole.ts:69:7) <===
+  at console.error (node_modules/@testing-library/react-hooks/lib/core/console.js:19:7)
+  at printWarning (node_modules/react-dom/cjs/react-dom.development.js:67:30)
+  at error (node_modules/react-dom/cjs/react-dom.development.js:43:5)
+  ...
+  ```
+
+  Use `restoreConsole()` to get the original codeframe
+
+- Be careful: the shorten exception message does not always match the original console message (because of [React error boundary](https://reactjs.org/docs/error-boundaries.html)?)
+
+- Libraries that console.\* exceptions <sup>[1](https://github.com/expressjs/express/blob/4.17.3/lib/application.js#L630)</sup> <sup>[2](https://github.com/expressjs/api-error-handler/blob/1.0.0/index.js#L22)</sup> introduce an infinite loop:
+  throw-on intercepts the console.\* call and throws an exception => the library catches the exception and console.\* it, ect.

@@ -30,6 +30,7 @@
     "lint": "npm run tsc && npm run eslint",
     "test": "TZ=Europe/Paris jest --verbose",
     "test:coverage": "TZ=Europe/Paris jest --coverage",
+    "doc:example": "jest MyComponent.test.ts",
     "prepare": "husky install",
     "precommit": "npm run lint",
     "prepush": "npm run lint && npm run test",
