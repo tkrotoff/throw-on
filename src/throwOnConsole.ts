@@ -17,7 +17,7 @@ function formatMessage(ignore: Options['ignore'], ...data: any[]) {
   const message = format(...data);
 
   return {
-    shouldNotThrow: ignore.some(msgToIgnore =>
+    shouldThrow: !ignore.some(msgToIgnore =>
       typeof msgToIgnore === 'string' ? message.includes(msgToIgnore) : message.match(msgToIgnore)
     ),
     message
@@ -59,8 +59,8 @@ export function throwOnConsole(methodName: ConsoleMethodName, options: Options =
   if (methodName === 'assert') {
     console.assert = (condition?: boolean, ...data: any[]) => {
       if (!condition) {
-        const { shouldNotThrow, message } = formatMessage(ignore, ...data);
-        if (!shouldNotThrow) {
+        const { shouldThrow, message } = formatMessage(ignore, ...data);
+        if (shouldThrow) {
           throw new ThrowOnError(`throw-on console.assert: ${getFirstLine(message)}`);
         }
       }
@@ -68,8 +68,8 @@ export function throwOnConsole(methodName: ConsoleMethodName, options: Options =
   } else {
     console[methodName] = (...data: any[]) => {
       originalConsole[methodName](...data);
-      const { shouldNotThrow, message } = formatMessage(ignore, ...data);
-      if (!shouldNotThrow) {
+      const { shouldThrow, message } = formatMessage(ignore, ...data);
+      if (shouldThrow) {
         throw new ThrowOnError(`throw-on console.${methodName}: ${getFirstLine(message)}`);
       }
     };
