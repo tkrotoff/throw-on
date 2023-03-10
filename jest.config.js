@@ -3,7 +3,7 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { defaults } = require('jest-config');
 
-/** @type import('@jest/types').Config.InitialOptions */
+/** @type {import('jest').Config} */
 const config = {
   testEnvironment: 'jsdom',
 
