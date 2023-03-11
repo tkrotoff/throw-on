@@ -14,7 +14,7 @@ import { inspect } from './inspect';
  */
 export function format(str?: any, ...values: any[]) {
   if (typeof str !== 'string') {
-    return (str !== undefined ? [str, ...values] : values)
+    return (str === undefined ? values : [str, ...values])
       .map(value => (typeof value === 'string' ? value : inspect(value)))
       .join(' ');
   }

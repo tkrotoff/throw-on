@@ -69,8 +69,8 @@ function getName(object: any) {
       object instanceof String
         ? object.constructor.name
         : `${object.constructor.name}${
-            (object.length !== undefined ? `(${object.length})` : '') ||
-            (object.size !== undefined ? `(${object.size})` : '')
+            (object.length === undefined ? '' : `(${object.length})`) ||
+            (object.size === undefined ? '' : `(${object.size})`)
           }`;
   }
 
@@ -207,8 +207,8 @@ function str(key: string | number | symbol, holder: any, recurseTimes: number): 
 
     case 'function': {
       //showEmptyBraces = true;
-      res = `[${value.constructor !== undefined ? value.constructor.name : 'Unknown'}${
-        value.name !== '' ? `: ${value.name}` : ' (anonymous)'
+      res = `[${value.constructor === undefined ? 'Unknown' : value.constructor.name}${
+        value.name === '' ? ' (anonymous)' : `: ${value.name}`
       }]`;
       break;
     }
