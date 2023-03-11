@@ -1,3 +1,7 @@
+## 0.8.0 (2023/03/11)
+
+- Update npm packages
+
 ## 0.7.0 (2022/11/15)
 
 - Breaking change: always display the original console message before throwing
